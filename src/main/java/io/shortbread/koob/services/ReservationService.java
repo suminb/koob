@@ -1,11 +1,13 @@
 package io.shortbread.koob.services;
 
+import io.shortbread.koob.utils.DateRange;
 import io.shortbread.koob.dao.ReservationDAO;
 import io.shortbread.koob.exceptions.InvalidReservationRequestException;
 import io.shortbread.koob.models.Reservation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 
@@ -59,7 +61,14 @@ public class ReservationService {
         return reservation;
     }
 
-    public Iterable<Reservation> getAllReservations() {
-        return reservationDAO.findAll();
+    public Iterable<Reservation> findReservationsBetween(LocalDate lowerbound, LocalDate upperbound) {
+        return reservationDAO.findAllBetween(
+                lowerbound.atStartOfDay(),
+                // Potential issue: May not be able to deal with leap seconds
+                upperbound.atTime(23, 59, 59));
+    }
+
+    public Iterable<Reservation> findReservationsBetween(DateRange dateRange) {
+        return findReservationsBetween((LocalDate) dateRange.getLowerbound(), (LocalDate) dateRange.getUpperbound());
     }
 }

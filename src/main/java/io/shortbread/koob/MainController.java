@@ -3,16 +3,15 @@ package io.shortbread.koob;
 import io.shortbread.koob.exceptions.InvalidRequestException;
 import io.shortbread.koob.models.Reservation;
 import io.shortbread.koob.services.ReservationService;
+import io.shortbread.koob.utils.DateRange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestController
@@ -34,8 +33,13 @@ public class MainController {
     }
 
     @GetMapping("/reservations")
-    public Iterable<Reservation> getAllReservations() {
-        return reservationService.getAllReservations();
+    public Iterable<Reservation> getReservations(
+            @RequestParam(value = "date_lowerbound")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateLowerbound,
+            @RequestParam(value = "date_upperbound")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateUpperbound
+    ) throws Exception {
+        return reservationService.findReservationsBetween(DateRange.build(dateLowerbound, dateUpperbound));
     }
 
     /**
