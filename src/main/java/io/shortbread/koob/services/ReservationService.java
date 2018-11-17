@@ -1,4 +1,4 @@
-package io.shortbread.koob.service;
+package io.shortbread.koob.services;
 
 import io.shortbread.koob.dao.ReservationDAO;
 import io.shortbread.koob.exceptions.InvalidReservationRequestException;
