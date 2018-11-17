@@ -1,4 +1,4 @@
-OpenTable
+Koob
 =========
 
-*OpenTable* is a famous online restaurant reservation service. However, this is a meeting room reservation system. We will try to come up with a better name.
+Koob is a meeting room reservation system. If you read it backward, it's pretty much self-explanatory ;-)
