@@ -2,7 +2,6 @@ package io.shortbread.koob.services;
 
 import io.shortbread.koob.utils.DateRange;
 import io.shortbread.koob.dao.ReservationDAO;
-import io.shortbread.koob.exceptions.InvalidReservationRequestException;
 import io.shortbread.koob.models.Reservation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,5 +69,9 @@ public class ReservationService {
 
     public Iterable<Reservation> findReservationsBetween(DateRange dateRange) {
         return findReservationsBetween((LocalDate) dateRange.getLowerbound(), (LocalDate) dateRange.getUpperbound());
+    }
+
+    public void deleteAllReservations() {
+        reservationDAO.deleteAll();
     }
 }

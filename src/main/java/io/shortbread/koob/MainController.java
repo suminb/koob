@@ -1,6 +1,6 @@
 package io.shortbread.koob;
 
-import io.shortbread.koob.exceptions.InvalidRequestException;
+import io.shortbread.koob.services.InvalidRequestException;
 import io.shortbread.koob.models.Reservation;
 import io.shortbread.koob.services.ReservationService;
 import io.shortbread.koob.utils.DateRange;

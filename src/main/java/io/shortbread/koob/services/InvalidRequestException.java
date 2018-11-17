@@ -1,4 +1,4 @@
-package io.shortbread.koob.exceptions;
+package io.shortbread.koob.services;
 
 import lombok.Getter;
 
