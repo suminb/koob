@@ -21,15 +21,24 @@ public class Reservation {
 
     @Getter
     @Setter
-    private LocalDateTime startDateTime;
+    private LocalDateTime startDatetime;
 
     @Getter
     @Setter
-    private LocalDateTime endDateTime;
+    private LocalDateTime endDatetime;
+
+    public Reservation() {
+    }
 
     public Reservation(int room, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         setRoom(room);
-        setStartDateTime(startDateTime);
-        setEndDateTime(endDateTime);
+        setStartDatetime(startDateTime);
+        setEndDatetime(endDateTime);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Reservation@%d{room=%d, start=%s, end=%s",
+                getId(), getRoom(), getStartDatetime(), getEndDatetime());
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Iterator;
 
 @Service
 public class ReservationService {
@@ -31,7 +32,14 @@ public class ReservationService {
         if (!isValidHours(endDateTime)) {
             throw new InvalidReservationRequestException("End datetime must be given in 30-min intervals");
         }
-        // TODO: Check if there is any overlapping reservation
+
+        // FIXME: We don't need the actual records; need a count only.
+        Iterator<Reservation> overlappingReservations = reservationDAO.findOverlappings(room, startDateTime, endDateTime).iterator();
+        if (overlappingReservations.hasNext()) {
+            Reservation overlapped = overlappingReservations.next();
+            throw new InvalidReservationRequestException(
+                    String.format("Overlapping reservation exists: %s", overlapped));
+        }
         Reservation reservation = new Reservation(room, startDateTime, endDateTime);
         reservationDAO.save(reservation);
 
