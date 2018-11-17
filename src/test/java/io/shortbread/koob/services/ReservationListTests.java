@@ -1,7 +1,6 @@
 package io.shortbread.koob.services;
 
 import io.shortbread.koob.config.AppConfig;
-import io.shortbread.koob.exceptions.InvalidRequestException;
 import io.shortbread.koob.models.Reservation;
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
@@ -25,6 +24,8 @@ public class ReservationListTests {
 
     @Before
     public void setup() throws InvalidRequestException {
+        reservationService.deleteAllReservations();
+
         List<Object[]> params = Arrays.asList(new Object[][] {
                 {"2018-11-16T12:00", "2018-11-16T13:00"},
                 {"2018-11-17T03:00", "2018-11-17T03:30"},
