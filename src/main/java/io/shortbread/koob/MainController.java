@@ -50,14 +50,14 @@ public class MainController {
 
     /**
      *
-     * @param room Meeting room number
+     * @param room Meeting roomId number
      * @param startDatetime Specifies when the reservation begins (inclusive)
      * @param endDatetime Specifies when the reservation ends (exclusive)
      * @return
      */
     @PostMapping("/reservations")
     public Reservation createReservation(
-            @RequestParam(value = "room") int room,
+            @RequestParam(value = "roomId") int room,
             @RequestParam(value = "start_datetime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDatetime,
             @RequestParam(value = "end_datetime")

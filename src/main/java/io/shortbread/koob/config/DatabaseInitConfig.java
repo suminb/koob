@@ -38,9 +38,10 @@ public class DatabaseInitConfig {
         statement.executeUpdate(
                 "CREATE TABLE reservations(" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        "room INTEGER NOT NULL," +
+                        "room_id INTEGER NOT NULL," +
                         "start_datetime DATETIME NOT NULL," +
-                        "end_datetime DATETIME NOT NULL" +
+                        "end_datetime DATETIME NOT NULL," +
+                        "FOREIGN KEY(room_id) REFERENCES rooms(id)" +
                         ")"
         );
         statement.close();

@@ -18,7 +18,7 @@ public class Reservation {
 
     @Getter
     @Setter
-    private Integer room;
+    private Integer roomId;
 
     @Getter
     @Setter
@@ -31,8 +31,8 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(int room, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        setRoom(room);
+    public Reservation(int roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        setRoomId(roomId);
         setStartDatetime(startDateTime);
         setEndDatetime(endDateTime);
     }
@@ -40,7 +40,7 @@ public class Reservation {
     @Override
     public String toString() {
         return String.format("Reservation@%d{room=%d, start=%s, end=%s",
-                getId(), getRoom(), getStartDatetime(), getEndDatetime());
+                getId(), getRoomId(), getStartDatetime(), getEndDatetime());
     }
 
     public long duration() {
