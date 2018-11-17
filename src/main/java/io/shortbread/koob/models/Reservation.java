@@ -1,4 +1,4 @@
-package io.shortbread.opentable.models;
+package io.shortbread.koob.models;
 
 import lombok.Getter;
 import lombok.Setter;

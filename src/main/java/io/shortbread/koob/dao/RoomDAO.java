@@ -1,6 +1,6 @@
-package io.shortbread.opentable.dao;
+package io.shortbread.koob.dao;
 
-import io.shortbread.opentable.models.Room;
+import io.shortbread.koob.models.Room;
 import org.springframework.data.repository.CrudRepository;
 
 public interface RoomDAO extends CrudRepository<Room, Long> {

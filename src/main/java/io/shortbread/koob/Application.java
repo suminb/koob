@@ -1,4 +1,4 @@
-package io.shortbread.opentable;
+package io.shortbread.koob;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

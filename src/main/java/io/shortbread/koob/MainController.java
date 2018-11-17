@@ -1,7 +1,7 @@
-package io.shortbread.opentable;
+package io.shortbread.koob;
 
-import io.shortbread.opentable.models.Reservation;
-import io.shortbread.opentable.service.ReservationService;
+import io.shortbread.koob.models.Reservation;
+import io.shortbread.koob.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,7 +1,7 @@
-package io.shortbread.opentable.service;
+package io.shortbread.koob.service;
 
-import io.shortbread.opentable.dao.ReservationDAO;
-import io.shortbread.opentable.models.Reservation;
+import io.shortbread.koob.dao.ReservationDAO;
+import io.shortbread.koob.models.Reservation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
