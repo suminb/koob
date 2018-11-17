@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "reservations")
@@ -40,5 +41,9 @@ public class Reservation {
     public String toString() {
         return String.format("Reservation@%d{room=%d, start=%s, end=%s",
                 getId(), getRoom(), getStartDatetime(), getEndDatetime());
+    }
+
+    public long duration() {
+        return startDatetime.until(endDatetime, ChronoUnit.MINUTES);
     }
 }
