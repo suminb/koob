@@ -21,14 +21,27 @@ public class DatabaseInitConfig {
         // FIXME: Use the equivalant of Python's `with` statement
         Connection connection = dataSource.getConnection();
         Statement statement = connection.createStatement();
+        statement.execute("DROP TABLE IF EXISTS rooms");
+        statement.executeUpdate(
+                "CREATE TABLE rooms(" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "name VARCHAR(255) NOT NULL," +
+                        "capacity INTEGER NOT NULL" +
+                        ")"
+        );
+        statement.execute("INSERT INTO rooms VALUES(1, 'Won', 8)");
+        statement.execute("INSERT INTO rooms VALUES(2, 'Dollar', 12)");
+        statement.execute("INSERT INTO rooms VALUES(3, 'Baht', 6)");
+
+        // FIXME: Foreign constraint keys
         statement.execute("DROP TABLE IF EXISTS reservations");
         statement.executeUpdate(
-            "CREATE TABLE reservations(" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "room INTEGER NOT NULL," +
-                "start_datetime DATETIME NOT NULL," +
-                "end_datetime DATETIME NOT NULL" +
-            ")"
+                "CREATE TABLE reservations(" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "room INTEGER NOT NULL," +
+                        "start_datetime DATETIME NOT NULL," +
+                        "end_datetime DATETIME NOT NULL" +
+                        ")"
         );
         statement.close();
         connection.close();

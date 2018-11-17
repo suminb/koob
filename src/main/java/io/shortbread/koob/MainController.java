@@ -2,7 +2,9 @@ package io.shortbread.koob;
 
 import io.shortbread.koob.exceptions.InvalidRequestException;
 import io.shortbread.koob.models.Reservation;
+import io.shortbread.koob.models.Room;
 import io.shortbread.koob.services.ReservationService;
+import io.shortbread.koob.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,9 @@ public class MainController {
     private DataSource dataSource;
 
     @Autowired
+    private RoomService roomService;
+
+    @Autowired
     private ReservationService reservationService;
 
     @GetMapping("/")
@@ -31,6 +36,11 @@ public class MainController {
         System.out.println(conn);
 
         return "Hello World!";
+    }
+
+    @GetMapping("/rooms")
+    public Iterable<Room> getAllRooms() {
+        return roomService.getAll();
     }
 
     @GetMapping("/reservations")
