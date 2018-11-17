@@ -14,15 +14,15 @@ public abstract class TemporalRange {
     @Setter
     protected ChronoLocalDate upperbound;
 
-    public TemporalRange(ChronoLocalDate lowerbound, ChronoLocalDate upperbound) throws Exception {
+    public TemporalRange(ChronoLocalDate lowerbound, ChronoLocalDate upperbound) throws InvalidTemporalRangeException {
         setLowerbound(lowerbound);
         setUpperbound(upperbound);
         validate();
     }
 
-    public void validate() throws Exception {
+    public void validate() throws InvalidTemporalRangeException {
         if (lowerbound.isAfter(upperbound)) {
-            throw new Exception("Lowerbound must be earlier than upperbound");
+            throw new InvalidTemporalRangeException("Lowerbound must be earlier than upperbound");
         }
     }
 }
