@@ -52,7 +52,7 @@ public class MainController {
 
     /**
      *
-     * @param room Meeting roomId number
+     * @param roomId Meeting room ID
      * @param startDatetime Specifies when the reservation begins (inclusive)
      * @param endDatetime Specifies when the reservation ends (exclusive)
      * @return
@@ -60,12 +60,12 @@ public class MainController {
     @CrossOrigin(CORS_SRC)
     @PostMapping("/reservations")
     public Reservation createReservation(
-            @RequestParam(value = "roomId") int room,
+            @RequestParam(value = "room_id") int roomId,
             @RequestParam(value = "start_datetime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDatetime,
             @RequestParam(value = "end_datetime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDatetime
     ) throws InvalidRequestException {
-        return reservationService.createReservation(room, startDatetime, endDatetime);
+        return reservationService.createReservation(roomId, startDatetime, endDatetime);
     }
 }
