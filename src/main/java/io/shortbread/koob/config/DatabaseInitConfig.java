@@ -39,6 +39,8 @@ public class DatabaseInitConfig {
                 "CREATE TABLE reservations(" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         "room_id INTEGER NOT NULL," +
+                        "subject VARCHAR(255) NOT NULL," +
+                        "description TEXT," +
                         "start_datetime DATETIME NOT NULL," +
                         "end_datetime DATETIME NOT NULL," +
                         "FOREIGN KEY(room_id) REFERENCES rooms(id)" +

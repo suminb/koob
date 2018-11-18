@@ -32,8 +32,9 @@ public class ReservationDurationTests {
 
     @Test
     public void testDuration() {
-        Reservation reservation = new Reservation(0,
-                LocalDateTime.parse(startDatetime), LocalDateTime.parse(endDatetime));
+        Reservation reservation = new Reservation();
+        reservation.setStartDatetime(LocalDateTime.parse(startDatetime));
+        reservation.setEndDatetime(LocalDateTime.parse(endDatetime));
         Assert.assertEquals(duration, reservation.getDuration());
     }
 }

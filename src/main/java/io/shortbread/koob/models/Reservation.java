@@ -24,6 +24,14 @@ public class Reservation {
 
     @Getter
     @Setter
+    private String subject;
+
+    @Getter
+    @Setter
+    private String description;
+
+    @Getter
+    @Setter
     @JsonProperty("start_datetime")
     private LocalDateTime startDatetime;
 
@@ -35,11 +43,11 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(int roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        setRoomId(roomId);
-        setStartDatetime(startDateTime);
-        setEndDatetime(endDateTime);
-    }
+//    public Reservation(int roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+//        setRoomId(roomId);
+//        setStartDatetime(startDateTime);
+//        setEndDatetime(endDateTime);
+//    }
 
     @Override
     public String toString() {

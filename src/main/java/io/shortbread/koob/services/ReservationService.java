@@ -28,7 +28,7 @@ public class ReservationService {
         return datetime.getMinute() % 30 == 0;
     }
 
-    public Reservation createReservation(int room, LocalDateTime startDatetime, LocalDateTime endDatetime)
+    public Reservation createReservation(int room, String subject, String description, LocalDateTime startDatetime, LocalDateTime endDatetime)
             throws InvalidReservationRequestException {
 
         if (!isValidHours(startDatetime)) {
@@ -48,7 +48,12 @@ public class ReservationService {
             throw new InvalidReservationRequestException(
                     String.format("Overlapping reservation exists: %s", overlapped));
         }
-        Reservation reservation = new Reservation(room, startDatetime, endDatetime);
+        Reservation reservation = new Reservation();
+        reservation.setRoomId(room);
+        reservation.setSubject(subject);
+        reservation.setDescription(description);
+        reservation.setStartDatetime(startDatetime);
+        reservation.setEndDatetime(endDatetime);
 
         if (reservation.getDuration() < MIN_DURATION) {
             throw new InvalidReservationRequestException(
