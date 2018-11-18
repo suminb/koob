@@ -1,18 +1,16 @@
 import React, {Component} from 'react';
 
-const timeslotKeys = [...Array(48).keys()];
-const timeslots = timeslotKeys.map(k => {
-    var hour = Math.floor(k / 2);
-    var minute = (k % 2) * 30;
-
-    return [hour, minute];
-});
+const timeslots = [...Array(48).keys()];
 
 class TimeTable extends Component {
     state = {
         rooms: [],
-        reservations: {}
+        reservations: [],
+        reservationsDict: {}
     };
+
+    // key = roomId
+    rowSpans = {};
 
     // Code is invoked after the component is mounted/inserted into the DOM tree.
     componentDidMount() {
@@ -26,61 +24,104 @@ class TimeTable extends Component {
                 })
             });
 
-        var url = new URL(urlPrefix + '/reservations_by_room');
+        var url = new URL(urlPrefix + '/reservations');
         url.searchParams.append('start_datetime', '2018-11-17');
         url.searchParams.append('end_datetime', '2018-11-17');
 
         fetch(url)
             .then(resp => resp.json())
             .then(data => {
+                var reservations = this.processReservations(data);
                 this.setState({
-                    reservations: data
+                    reservations: reservations,
+                    reservationsDict: this.makeReservationsDict(reservations)
                 })
             });
     }
 
-    generateSlots(rooms) {
-        return timeslots.map(ts => {
-            const hour = ts[0], minute = ts[1];
-            const columns = rooms.map(r => {
-                return <td>{r.name}</td>
-            });
-            return <tr>
-                <td>{hour}:{minute}</td>
-                {columns}
-            </tr>;
+    processReservations(reservations) {
+        return reservations.map(r => {
+            var startDatetime = new Date(Date.parse(r['start_datetime']));
+            var endDatetime = new Date(Date.parse(r['end_datetime']));
+
+            r.slot = startDatetime.getHours() * 2 + startDatetime.getMinutes() / 30;
+            r.spans = r.duration / 30;
+            return r;
         });
     }
 
-    render() {
-        const { rooms, reservations } = this.state;
+    /**
+     * Converts a list of reservations into a dictionary (with [slot, room_id] as the key)
+     * 
+     * @param {*} reservations 
+     */
+    makeReservationsDict(reservations) {
+        var dict = {};
+        reservations.map(r => {
+            const key = [r.slot, r.room_id];
 
-        const theads = rooms.map(r => {
+            if (!(key in dict)) {
+                dict[key] = r;
+            }
+            else {
+                // This should not happen
+            }
+        });
+        return dict;
+    }
+
+    generateRow(rooms, slot, reservationDict) {
+        const hour = Math.floor(slot / 2);
+        const minute = (slot % 2) * 30;
+        const roomColumns = rooms.map(room => {
+            const key = [slot, room.id].toString();
+            var reservation = reservationDict[key];
+
+            if (reservation) {
+                // Store the remaining number of row spans
+                this.rowSpans[room.id] = reservation.spans - 1;
+
+                return <td rowSpan={reservation.spans}>*</td>
+            }
+            else if (this.rowSpans[room.id]) {
+                this.rowSpans[room.id] -= 1;
+            }
+            else {
+                return <td></td>
+            }
+        });
+
+        return <tr>
+            <td>{hour}:{minute}</td>
+            {roomColumns}
+        </tr>;
+    }
+
+    render() {
+        const { rooms, reservationsDict } = this.state;
+
+        const theadColumns = rooms.map(r => {
             return <th key={r.id}>{r.name} ({r.capacity})</th>;
         });
 
-        const reservationList = Object.keys(reservations).map(k => {
-            var rs = reservations[k];
-            return rs.map(r => {
-                return <li>{r.room_id} {r.start_datetime} {r.end_datetime}</li>;
-            });
-        });
+        const tbody = timeslots.map(slot => {
+            return this.generateRow(rooms, slot, reservationsDict);
+        })
 
         return <div>
             <table className="ui table">
                 <thead>
                     <tr>
                         <th></th>
-                        {theads}
+                        {theadColumns}
                     </tr>
                 </thead>
                 <tbody>
-                    {this.generateSlots(rooms)}
+                    {tbody}
                 </tbody>
             </table>
-            <ul>{reservationList}</ul>
         </div>;
     }
 }
 
-export default Table;
+export default TimeTable;
