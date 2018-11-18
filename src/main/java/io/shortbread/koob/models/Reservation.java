@@ -1,5 +1,6 @@
 package io.shortbread.koob.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,21 +19,24 @@ public class Reservation {
 
     @Getter
     @Setter
-    private Integer room;
+    @JsonProperty("room_id")
+    private Integer roomId;
 
     @Getter
     @Setter
+    @JsonProperty("start_datetime")
     private LocalDateTime startDatetime;
 
     @Getter
     @Setter
+    @JsonProperty("end_datetime")
     private LocalDateTime endDatetime;
 
     public Reservation() {
     }
 
-    public Reservation(int room, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        setRoom(room);
+    public Reservation(int roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        setRoomId(roomId);
         setStartDatetime(startDateTime);
         setEndDatetime(endDateTime);
     }
@@ -40,7 +44,7 @@ public class Reservation {
     @Override
     public String toString() {
         return String.format("Reservation@%d{room=%d, start=%s, end=%s",
-                getId(), getRoom(), getStartDatetime(), getEndDatetime());
+                getId(), getRoomId(), getStartDatetime(), getEndDatetime());
     }
 
     public long duration() {
