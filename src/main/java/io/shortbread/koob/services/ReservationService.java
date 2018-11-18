@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Iterator;
+import java.util.*;
 
 @Service
 public class ReservationService {
@@ -50,7 +50,7 @@ public class ReservationService {
         }
         Reservation reservation = new Reservation(room, startDatetime, endDatetime);
 
-        if (reservation.duration() < MIN_DURATION) {
+        if (reservation.getDuration() < MIN_DURATION) {
             throw new InvalidReservationRequestException(
                     String.format("Meeting must be at least %s minutes long", MIN_DURATION));
         }

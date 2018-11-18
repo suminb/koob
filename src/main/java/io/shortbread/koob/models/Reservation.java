@@ -47,7 +47,7 @@ public class Reservation {
                 getId(), getRoomId(), getStartDatetime(), getEndDatetime());
     }
 
-    public long duration() {
+    public long getDuration() {
         return startDatetime.until(endDatetime, ChronoUnit.MINUTES);
     }
 }

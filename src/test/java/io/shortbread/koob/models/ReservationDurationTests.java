@@ -34,6 +34,6 @@ public class ReservationDurationTests {
     public void testDuration() {
         Reservation reservation = new Reservation(0,
                 LocalDateTime.parse(startDatetime), LocalDateTime.parse(endDatetime));
-        Assert.assertEquals(duration, reservation.duration());
+        Assert.assertEquals(duration, reservation.getDuration());
     }
 }
