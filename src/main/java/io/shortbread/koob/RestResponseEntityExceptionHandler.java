@@ -9,19 +9,20 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
-    protected ResponseEntity<Object> handleConstraintViolation(RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    protected ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
+        String message = ex.getConstraintViolations().stream().map(v -> v.getMessage()).collect(Collectors.joining());
+        return handleExceptionInternal(ex, message, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
-        String bodyOfResponse = "This should be application specific";
-        return handleExceptionInternal(ex, bodyOfResponse,
+        return handleExceptionInternal(ex, ex.getMessage(),
                 new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 }
