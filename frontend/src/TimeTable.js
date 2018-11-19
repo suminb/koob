@@ -70,7 +70,11 @@ class TimeTable extends Component {
         return dict;
     }
 
-    generateRow(rooms, slot, reservationDict) {
+    renderReservationForm(slot, roomId) {
+        console.log(slot, roomId);
+    }
+
+    renderRow(rooms, slot, reservationDict) {
         const hour = Math.floor(slot / 2);
         const minute = (slot % 2) * 30;
         const roomColumns = rooms.map(room => {
@@ -81,13 +85,13 @@ class TimeTable extends Component {
                 // Store the remaining number of row spans
                 this.rowSpans[room.id] = reservation.spans - 1;
 
-                return <td rowSpan={reservation.spans}>*</td>
+                return <td rowSpan={reservation.spans}>{this.renderReservation(reservation)}</td>
             }
             else if (this.rowSpans[room.id]) {
                 this.rowSpans[room.id] -= 1;
             }
             else {
-                return <td></td>
+                return <td onClick={(e) => this.renderReservationForm(slot, room.id)}></td>
             }
         });
 
@@ -95,6 +99,25 @@ class TimeTable extends Component {
             <td>{hour}:{minute}</td>
             {roomColumns}
         </tr>;
+    }
+
+    renderReservation(reservation) {
+        return <div className="ui cards">
+            <div className="card">
+                <div className="content">
+                    <div className="header">
+                        {reservation.subject}
+                    </div>
+                    <div className="meta">
+                    </div>
+                    <div className="description">
+                        {reservation.description}
+                    </div>
+                </div>
+                <div className="extra content">
+                </div>
+            </div>
+        </div>;
     }
 
     render() {
@@ -105,7 +128,7 @@ class TimeTable extends Component {
         });
 
         const tbody = timeslots.map(slot => {
-            return this.generateRow(rooms, slot, reservationsDict);
+            return this.renderRow(rooms, slot, reservationsDict);
         })
 
         return <div>
