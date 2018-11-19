@@ -61,11 +61,13 @@ public class MainController {
     @PostMapping("/reservations")
     public Reservation createReservation(
             @RequestParam(value = "room_id") int roomId,
+            @RequestParam(value = "subject") String subject,
+            @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "start_datetime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDatetime,
             @RequestParam(value = "end_datetime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDatetime
     ) throws InvalidRequestException {
-        return reservationService.createReservation(roomId, startDatetime, endDatetime);
+        return reservationService.createReservation(roomId, subject, description, startDatetime, endDatetime);
     }
 }

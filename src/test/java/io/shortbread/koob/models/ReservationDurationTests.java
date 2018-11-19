@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Ensures Reservation.getDuration() works
+ */
 @RunWith(Parameterized.class)
 public class ReservationDurationTests {
     @Parameterized.Parameters(name = "{index}: {0}, {1}, {2}")
@@ -32,8 +35,9 @@ public class ReservationDurationTests {
 
     @Test
     public void testDuration() {
-        Reservation reservation = new Reservation(0,
-                LocalDateTime.parse(startDatetime), LocalDateTime.parse(endDatetime));
-        Assert.assertEquals(duration, reservation.duration());
+        Reservation reservation = new Reservation();
+        reservation.setStartDatetime(LocalDateTime.parse(startDatetime));
+        reservation.setEndDatetime(LocalDateTime.parse(endDatetime));
+        Assert.assertEquals(duration, reservation.getDuration());
     }
 }

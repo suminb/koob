@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -24,6 +25,15 @@ public class Reservation {
 
     @Getter
     @Setter
+    @NotBlank
+    private String subject;
+
+    @Getter
+    @Setter
+    private String description;
+
+    @Getter
+    @Setter
     @JsonProperty("start_datetime")
     private LocalDateTime startDatetime;
 
@@ -35,19 +45,13 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(int roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        setRoomId(roomId);
-        setStartDatetime(startDateTime);
-        setEndDatetime(endDateTime);
-    }
-
     @Override
     public String toString() {
         return String.format("Reservation@%d{room=%d, start=%s, end=%s",
                 getId(), getRoomId(), getStartDatetime(), getEndDatetime());
     }
 
-    public long duration() {
+    public long getDuration() {
         return startDatetime.until(endDatetime, ChronoUnit.MINUTES);
     }
 }
