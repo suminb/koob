@@ -30,16 +30,23 @@ class ReservationForm extends Component {
         const parent = this;
         
         fetch('http://localhost:8087/reservations', {method: 'POST', body: data})
-            .then(resp => resp.json())
-            .then(data => {
-                parent.props.onRoomReserved(data);
+            .then(resp => {
+                if (resp.status == 200) {
+                    resp.json().then(data => {
+                        parent.props.onRoomReserved(data);
 
-                // FIXME: Not sure if this is a good practice...
-                parent.handleClose(event);
+                        // FIXME: Not sure if this is a good practice...
+                        parent.handleClose(event);
+                    });
+                }
+                else {
+                    resp.json().then(data => {
+                        console.log('make reservation 2');
+                        console.log(resp, data);
+                    });
+                }
             })
-            .catch(resp => {
-                console.log(resp);
-            });
+            .catch(resp => {});
     }
 
     handleChange(e) {
