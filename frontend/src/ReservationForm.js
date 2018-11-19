@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 
 class ReservationForm extends Component {
     state = {
-        roomId: 1,
+        roomId: 0,
         subject: null,
         description: null,
         startDatetime: null,
@@ -32,7 +32,7 @@ class ReservationForm extends Component {
         fetch('http://localhost:8087/reservations', {method: 'POST', body: data})
             .then(resp => resp.json())
             .then(data => {
-                console.log(data);
+                parent.props.onRoomReserved(data);
 
                 // FIXME: Not sure if this is a good practice...
                 parent.handleClose(event);

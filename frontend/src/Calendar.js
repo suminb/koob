@@ -38,21 +38,18 @@ class Calendar extends Component {
         fetch(url)
             .then(resp => resp.json())
             .then(data => {
-                var reservations = this.processReservations(data);
-                this.setState({reservations: reservations});
+                this.setState({ reservations: data.map(r => this.processReservation(r)) });
             });
     }
 
-    processReservations(reservations) {
-        return reservations.map(r => {
-            return {
-                id: r.id,
-                resourceId: r['room_id'],
-                title: r.subject,
-                start: new Date(Date.parse(r['start_datetime'])),
-                end: new Date(Date.parse(r['end_datetime']))
-            };
-        });
+    processReservation(raw) {
+        return {
+            id: raw.id,
+            resourceId: raw['room_id'],
+            title: raw.subject,
+            start: new Date(Date.parse(raw['start_datetime'])),
+            end: new Date(Date.parse(raw['end_datetime']))
+        };
     }
 
     formatDatetime(date) {
@@ -60,11 +57,18 @@ class Calendar extends Component {
     }
 
     handleSelect(event) {
-        var { start, end } = event;
+        var { start, end, resourceId } = event;
         this.setState({
             modalFormOpen: true,
+            selectedResourceId: resourceId,
             startDatetime: this.formatDatetime(start),
             endDatetime: this.formatDatetime(end)
+        });
+    }
+
+    handleRoomReserved(reservation) {
+        this.setState({
+            reservations: this.state.reservations.concat(this.processReservation(reservation))
         });
     }
 
@@ -95,8 +99,10 @@ class Calendar extends Component {
                     <Modal.Header>Schedule a meeting</Modal.Header>
                     <Modal.Content>
                         <ReservationForm
+                            roomId={this.state.selectedResourceId}
                             startDatetime={this.state.startDatetime}
                             endDatetime={this.state.endDatetime}
+                            onRoomReserved={event => this.handleRoomReserved(event)}
                             onClose={_ => this.setState({ modalFormOpen: false })}
                             ></ReservationForm>
                     </Modal.Content>
