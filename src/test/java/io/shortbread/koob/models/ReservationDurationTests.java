@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Ensures Reservation.getDuration() works
+ */
 @RunWith(Parameterized.class)
 public class ReservationDurationTests {
     @Parameterized.Parameters(name = "{index}: {0}, {1}, {2}")
