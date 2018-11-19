@@ -45,12 +45,6 @@ public class Reservation {
     public Reservation() {
     }
 
-//    public Reservation(int roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-//        setRoomId(roomId);
-//        setStartDatetime(startDateTime);
-//        setEndDatetime(endDateTime);
-//    }
-
     @Override
     public String toString() {
         return String.format("Reservation@%d{room=%d, start=%s, end=%s",
