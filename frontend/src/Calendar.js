@@ -36,15 +36,8 @@ const events = [
     title: 'Birthday Party',
     start: new Date(2018, 10, 19, 7, 0, 0),
     end: new Date(2018, 10, 19, 10, 30, 0),
-    resourceId: 4,
+    resourceId: 3,
   },
-]
-
-const resourceMap = [
-  { resourceId: 1, resourceTitle: 'Board room' },
-  { resourceId: 2, resourceTitle: 'Training room' },
-  { resourceId: 3, resourceTitle: 'Meeting room 1' },
-  { resourceId: 4, resourceTitle: 'Meeting room 2' },
 ]
 
 class Calendar extends Component {
@@ -53,7 +46,7 @@ class Calendar extends Component {
         startDatetime: null,
         endDatetime: null,
 
-        rooms: [],
+        resourceMap: [],
         reservations: [],
         reservationsDict: {}
     };
@@ -66,7 +59,7 @@ class Calendar extends Component {
             .then(resp => resp.json())
             .then(data => {
                 this.setState({
-                    rooms: data
+                    resourceMap: data.map(r => {return {resourceId: r.id, resourceTitle: r.name}})
                 })
             });
 
@@ -130,35 +123,40 @@ class Calendar extends Component {
     }
 
     render() {
-        return <div>
-            <BigCalendar
-                selectable
-                localizer={BigCalendar.momentLocalizer(moment)}
-                events={events}
-                defaultView={BigCalendar.Views.DAY}
-                views={['day']}
-                step={30}
-                resources={resourceMap}
-                resourceIdAccessor="resourceId"
-                resourceTitleAccessor="resourceTitle"
-                startAccessor="start"
-                endAccessor="end"
-                onSelectEvent={event => alert(event.title)}
-                onSelectSlot={event => this.handleSelect(event)}
-            ></BigCalendar>
-            <Modal
-                open={this.state.modalFormOpen}
-                closeOnDocumentClick={true}>
-                <Modal.Header>Schedule a meeting</Modal.Header>
-                <Modal.Content>
-                    <ReservationForm
-                        startDatetime={this.state.startDatetime}
-                        endDatetime={this.state.endDatetime}
-                        onClose={e => this.setState({ modalFormOpen: false })}
-                        ></ReservationForm>
-                </Modal.Content>
-            </Modal>
-        </div>
+        if (this.state.resourceMap.length == 0) {
+            return <div>There is no meeting room available</div>;
+        }
+        else {
+            return <div>
+                <BigCalendar
+                    selectable
+                    localizer={BigCalendar.momentLocalizer(moment)}
+                    events={events}
+                    defaultView={BigCalendar.Views.DAY}
+                    views={['day']}
+                    step={30}
+                    resources={this.state.resourceMap}
+                    resourceIdAccessor="resourceId"
+                    resourceTitleAccessor="resourceTitle"
+                    startAccessor="start"
+                    endAccessor="end"
+                    onSelectEvent={event => alert(event.title)}
+                    onSelectSlot={event => this.handleSelect(event)}
+                ></BigCalendar>
+                <Modal
+                    open={this.state.modalFormOpen}
+                    closeOnDocumentClick={true}>
+                    <Modal.Header>Schedule a meeting</Modal.Header>
+                    <Modal.Content>
+                        <ReservationForm
+                            startDatetime={this.state.startDatetime}
+                            endDatetime={this.state.endDatetime}
+                            onClose={_ => this.setState({ modalFormOpen: false })}
+                            ></ReservationForm>
+                    </Modal.Content>
+                </Modal>
+            </div>
+        }
     }
 }
 
