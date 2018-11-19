@@ -27,7 +27,7 @@ class Calendar extends Component {
             .then(resp => resp.json())
             .then(data => {
                 this.setState({
-                    rooms: data.map(r => {return {resourceId: r.id, resourceTitle: r.name}})
+                    rooms: data.map(r => {return {roomId: r.id, roomName: r.name}})
                 })
             });
 
@@ -82,8 +82,8 @@ class Calendar extends Component {
                     views={['day']}
                     step={30}
                     resources={this.state.rooms}
-                    resourceIdAccessor="resourceId"
-                    resourceTitleAccessor="resourceTitle"
+                    resourceIdAccessor="roomId"
+                    resourceTitleAccessor="roomName"
                     startAccessor="start"
                     endAccessor="end"
                     onSelectEvent={event => alert(event.title)}
