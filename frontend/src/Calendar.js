@@ -49,6 +49,10 @@ const resourceMap = [
 
 class Calendar extends Component {
     state = {
+        modalFormOpen: false,
+        startDatetime: null,
+        endDatetime: null,
+
         rooms: [],
         reservations: [],
         reservationsDict: {}
@@ -94,8 +98,8 @@ class Calendar extends Component {
 
     /**
      * Converts a list of reservations into a dictionary (with [slot, room_id] as the key)
-     * 
-     * @param {*} reservations 
+     *
+     * @param {*} reservations
      */
     makeReservationsDict(reservations) {
         var dict = {};
@@ -112,20 +116,17 @@ class Calendar extends Component {
         return dict;
     }
 
-    handleSelect(start, end) {
-      const title = window.prompt('New Event name')
-      console.log(start, end);
-      if (title)
+    formatDatetime(date) {
+        return new Date(date - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+    }
+
+    handleSelect(event) {
+        var { start, end } = event;
         this.setState({
-          events: [
-            ...this.state.events,
-            {
-              start,
-              end,
-              title,
-            },
-          ],
-        })
+            modalFormOpen: true,
+            startDatetime: this.formatDatetime(start),
+            endDatetime: this.formatDatetime(end)
+        });
     }
 
     render() {
@@ -143,12 +144,18 @@ class Calendar extends Component {
                 startAccessor="start"
                 endAccessor="end"
                 onSelectEvent={event => alert(event.title)}
-                onSelectSlot={this.handleSelect}
+                onSelectSlot={event => this.handleSelect(event)}
             ></BigCalendar>
-            <Modal trigger={<Button>Schedule a meeting</Button>}>
+            <Modal
+                open={this.state.modalFormOpen}
+                closeOnDocumentClick={true}>
                 <Modal.Header>Schedule a meeting</Modal.Header>
                 <Modal.Content>
-                    <ReservationForm></ReservationForm>
+                    <ReservationForm
+                        startDatetime={this.state.startDatetime}
+                        endDatetime={this.state.endDatetime}
+                        onClose={e => this.setState({ modalFormOpen: false })}
+                        ></ReservationForm>
                 </Modal.Content>
             </Modal>
         </div>

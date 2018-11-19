@@ -2,42 +2,62 @@ import React, {Component} from 'react';
 
 class ReservationForm extends Component {
     state = {
-        room_id: 1,
+        roomId: 1,
         subject: null,
         description: null,
-        start_datetime: '2018-11-18T12:00',
-        end_datetime: '2018-11-18T13:30'
+        startDatetime: null,
+        endDatetime: null
     };
 
-    constructor() {
-        super();    
+    constructor(props) {
+        super();
+        this.props = props;
+    }
+
+    componentDidMount() {
+        this.setState(this.props);
+    }
+
+    handleClose(event) {
+        event.preventDefault();
+        if (this.props.onClose)
+            this.props.onClose();
     }
 
     handleSubmit(event) {
         event.preventDefault();
         const data = new FormData(event.target);
+        const parent = this;
         
         fetch('http://localhost:8087/reservations', {method: 'POST', body: data})
-            .then(resp => console.log(resp))
+            .then(resp => resp.json())
+            .then(data => {
+                console.log(data);
+
+                // FIXME: Not sure if this is a good practice...
+                parent.handleClose(event);
+            })
+            .catch(resp => {
+                console.log(resp);
+            });
     }
 
     handleChange(e) {
-        console.log(e.target.name, e.target.value);
         const key = e.target.name;
         this.setState({key: e.target.value});
     }
 
     render() {
-        return <form className="ui form" onSubmit={this.handleSubmit}>
-            <input type="hidden" name="room_id" value={this.state.room_id}/>
+        return <form className="ui form" onSubmit={this.handleSubmit.bind(this)}>
+            <input type="hidden" name="room_id" value={this.state.roomId}/>
             <div className="field">
                 <label>Schedule</label>
                 <div className="two fields">
                     <div className="field">
-                        <input type="datetime-local" name="start_datetime" value={this.state.start_datetime} onChange={this.handleChange.bind(this)} />
+                        <input type="datetime-local" name="start_datetime" value={this.state.startDatetime} onChange={this.handleChange.bind(this)} />
                     </div>
                     <div className="field">
-                        <input type="datetime-local" name="end_datetime" value={this.state.end_datetime} onChange={this.handleChange.bind(this)} />
+                        <input type="datetime-local" name="end_datetime" value={this.state.endDatetime} onChange={this.handleChange.bind(this)} />
                     </div>
                 </div>
             </div>
@@ -53,7 +73,7 @@ class ReservationForm extends Component {
                 <button className="ui primary button">
                     Save
                 </button>
-                <button className="ui button">
+                <button className="ui button" onClick={this.handleClose.bind(this)}>
                     Discard
                 </button>
             </div>
