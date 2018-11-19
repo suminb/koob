@@ -34,6 +34,8 @@ dependencies {
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.25.2'
     compile group: 'com.zsoltfabok', name: 'sqlite-dialect', version: '1.0'
     compile group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
+    compile group: 'org.json', name: 'json', version: '20180813'
+
 
     testCompile 'junit:junit'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.0.RELEASE'
