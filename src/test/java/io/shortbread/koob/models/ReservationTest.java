@@ -13,12 +13,18 @@ public class ReservationTest {
         return LocalDateTime.parse(datetime);
     }
 
-    @Test
-    public void testSynthesizeAllOccurrences() {
+    private static Reservation makeReservation(String start, String end, int interval, int count) {
         Reservation reservation = new Reservation();
-        reservation.setStart(LocalDateTime.parse("2018-11-11T10:00"));
-        reservation.setEnd(LocalDateTime.parse("2018-11-11T11:00"));
-        reservation.setRecurringProperties(RecurringFrequency.Weekly, 1, 3);
+        reservation.setStart(dt(start));
+        reservation.setEnd(dt(end));
+        reservation.setRecurringProperties(RecurringFrequency.Weekly, interval, count);
+
+        return reservation;
+    }
+
+    @Test
+    public void testSynthesizeAllOccurrences1() {
+        Reservation reservation = makeReservation("2018-11-11T10:00", "2018-11-11T11:00", 1, 3);
 
         List<Reservation> reservations = StreamSupport
                 .stream(reservation.synthesizeAllOccurences().spliterator(), false)
@@ -32,5 +38,20 @@ public class ReservationTest {
 
         Assert.assertEquals(dt("2018-11-25T10:00"), reservations.get(2).getStart());
         Assert.assertEquals(dt("2018-11-25T11:00"), reservations.get(2).getEnd());
+    }
+
+    @Test
+    public void testSynthesizeAllOccurrences2() {
+        Reservation reservation = makeReservation("2018-11-01T08:00", "2018-11-01T10:00", 2, 2);
+
+        List<Reservation> reservations = StreamSupport
+                .stream(reservation.synthesizeAllOccurences().spliterator(), false)
+                .collect(Collectors.toList());
+
+        Assert.assertEquals(dt("2018-11-01T08:00"), reservations.get(0).getStart());
+        Assert.assertEquals(dt("2018-11-01T10:00"), reservations.get(0).getEnd());
+
+        Assert.assertEquals(dt("2018-11-15T08:00"), reservations.get(1).getStart());
+        Assert.assertEquals(dt("2018-11-15T10:00"), reservations.get(1).getEnd());
     }
 }
