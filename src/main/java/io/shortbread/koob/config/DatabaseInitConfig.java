@@ -31,7 +31,8 @@ public class DatabaseInitConfig {
         );
         statement.execute("INSERT INTO rooms VALUES(1, 'Won', 8)");
         statement.execute("INSERT INTO rooms VALUES(2, 'Dollar', 12)");
-        statement.execute("INSERT INTO rooms VALUES(3, 'Baht', 6)");
+        statement.execute("INSERT INTO rooms VALUES(3, 'Yen', 8)");
+        statement.execute("INSERT INTO rooms VALUES(4, 'Baht', 6)");
 
         // FIXME: Foreign constraint keys
         statement.execute("DROP TABLE IF EXISTS reservations");
@@ -43,6 +44,9 @@ public class DatabaseInitConfig {
                         "description TEXT," +
                         "start_datetime DATETIME NOT NULL," +
                         "end_datetime DATETIME NOT NULL," +
+                        "recurring_freqency INTEGER NOT NULL," + // SQLite does not support enum type
+                        "recurring_interval INTEGER NOT NULL," +
+                        "recurring_count INTEGER NOT NULL," +
                         "FOREIGN KEY(room_id) REFERENCES rooms(id)" +
                         ")"
         );

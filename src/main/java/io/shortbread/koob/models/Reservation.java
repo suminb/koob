@@ -3,6 +3,7 @@ package io.shortbread.koob.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.validation.constraints.NotBlank;
 import javax.persistence.*;
@@ -42,6 +43,21 @@ public class Reservation {
     @JsonProperty("end_datetime")
     private LocalDateTime endDatetime;
 
+    @Getter
+    @Setter
+    @JsonProperty("recurring_frequency")
+    private RecurringFrequency recurringFrequency;
+
+    @Getter
+    @Setter
+    @JsonProperty("recurring_frequency")
+    private int recurringInterval;
+
+    @Getter
+    @Setter
+    @JsonProperty("recurring_count")
+    private int recurringCount;
+
     public Reservation() {
     }
 
@@ -53,5 +69,21 @@ public class Reservation {
 
     public long getDuration() {
         return startDatetime.until(endDatetime, ChronoUnit.MINUTES);
+    }
+
+    public LocalDateTime getLastOccurence() {
+        RecurringFrequency freq = getRecurringFrequency();
+        if (freq.equals(RecurringFrequency.None)) {
+            return getStartDatetime();
+        }
+        else {
+            if (freq.equals(RecurringFrequency.Weekly)) {
+                return getStartDatetime()
+                        .plus(getRecurringCount() * getRecurringInterval() * 7, ChronoUnit.DAYS);
+            }
+            else {
+                throw new NotImplementedException();
+            }
+        }
     }
 }
