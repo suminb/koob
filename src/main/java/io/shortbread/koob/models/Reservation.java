@@ -50,7 +50,7 @@ public class Reservation {
 
     @Getter
     @Setter
-    @JsonProperty("recurring_frequency")
+    @JsonProperty("recurring_interval")
     private int recurringInterval;
 
     @Getter

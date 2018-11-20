@@ -44,7 +44,7 @@ public class DatabaseInitConfig {
                         "description TEXT," +
                         "start_datetime DATETIME NOT NULL," +
                         "end_datetime DATETIME NOT NULL," +
-                        "recurring_freqency INTEGER NOT NULL," + // SQLite does not support enum type
+                        "recurring_frequency INTEGER NOT NULL," + // SQLite does not support enum type
                         "recurring_interval INTEGER NOT NULL," +
                         "recurring_count INTEGER NOT NULL," +
                         "FOREIGN KEY(room_id) REFERENCES rooms(id)" +
