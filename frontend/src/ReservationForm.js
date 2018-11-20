@@ -11,8 +11,8 @@ class ReservationForm extends Component {
         roomId: 0,
         subject: null,
         description: null,
-        startDatetime: null,
-        endDatetime: null,
+        start: null,
+        end: null,
         recurringFrequency: 'none',
         recurringCount: null
     };
@@ -38,8 +38,6 @@ class ReservationForm extends Component {
         const parent = this;
 
         // FIXME: Code refactoring needed
-        data.set('start_datetime', data.get('startDatetime'));
-        data.set('end_datetime', data.get('endDatetime'));
         data.set('recurring_frequency', data.get('recurringFrequency'));
         data.set('recurring_count', data.get('recurringCount'));
 
@@ -73,9 +71,9 @@ class ReservationForm extends Component {
                 <label>Schedule</label>
                 <div className="fields">
                     <Form.Input type="datetime-local" width={8}
-                        name="startDatetime" value={this.state.startDatetime} onChange={this.handleChange} />
+                        name="start" value={this.state.start} onChange={this.handleChange} />
                     <Form.Input type="datetime-local" width={8}
-                        name="endDatetime" value={this.state.endDatetime} onChange={this.handleChange} />
+                        name="end" value={this.state.end} onChange={this.handleChange} />
                 </div>
             </div>
             <div className="field">

@@ -42,8 +42,8 @@ public class DatabaseInitConfig {
                         "room_id INTEGER NOT NULL," +
                         "subject VARCHAR(255) NOT NULL," +
                         "description TEXT," +
-                        "start_datetime DATETIME NOT NULL," +
-                        "end_datetime DATETIME NOT NULL," +
+                        "start DATETIME NOT NULL," +
+                        "`end` DATETIME NOT NULL," +
                         "recurring_frequency INTEGER NOT NULL," + // SQLite does not support enum type
                         "recurring_interval INTEGER NOT NULL," +
                         "recurring_count INTEGER NOT NULL," +

@@ -53,8 +53,8 @@ public class MainController {
     /**
      *
      * @param roomId Meeting room ID
-     * @param startDatetime Specifies when the reservation begins (inclusive)
-     * @param endDatetime Specifies when the reservation ends (exclusive)
+     * @param start Specifies when the reservation begins (inclusive)
+     * @param end Specifies when the reservation ends (exclusive)
      * @return
      */
     @CrossOrigin(CORS_SRC)
@@ -63,11 +63,11 @@ public class MainController {
             @RequestParam(value = "room_id") int roomId,
             @RequestParam(value = "subject") String subject,
             @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "start_datetime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDatetime,
-            @RequestParam(value = "end_datetime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDatetime
+            @RequestParam(value = "start")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+            @RequestParam(value = "end")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end
     ) throws InvalidRequestException {
-        return reservationService.createReservation(roomId, subject, description, startDatetime, endDatetime);
+        return reservationService.createReservation(roomId, subject, description, start, end);
     }
 }

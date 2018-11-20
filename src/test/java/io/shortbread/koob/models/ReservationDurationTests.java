@@ -25,10 +25,10 @@ public class ReservationDurationTests {
     }
 
     @Parameterized.Parameter
-    public String startDatetime;
+    public String start;
 
     @Parameterized.Parameter(1)
-    public String endDatetime;
+    public String end;
 
     @Parameterized.Parameter(2)
     public int duration;
@@ -36,8 +36,8 @@ public class ReservationDurationTests {
     @Test
     public void testDuration() {
         Reservation reservation = new Reservation();
-        reservation.setStartDatetime(LocalDateTime.parse(startDatetime));
-        reservation.setEndDatetime(LocalDateTime.parse(endDatetime));
+        reservation.setStart(LocalDateTime.parse(start));
+        reservation.setEnd(LocalDateTime.parse(end));
         Assert.assertEquals(duration, reservation.getDuration());
     }
 }

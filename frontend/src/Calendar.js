@@ -32,8 +32,8 @@ class Calendar extends Component {
             });
 
         var url = new URL(urlPrefix + '/reservations');
-        url.searchParams.append('start_datetime', '2018-11-17');
-        url.searchParams.append('end_datetime', '2018-11-17');
+        url.searchParams.append('start', '2018-11-17');
+        url.searchParams.append('end', '2018-11-17');
 
         fetch(url)
             .then(resp => resp.json())
@@ -47,8 +47,8 @@ class Calendar extends Component {
             id: raw.id,
             resourceId: raw['room_id'],
             title: raw.subject,
-            start: new Date(Date.parse(raw['start_datetime'])),
-            end: new Date(Date.parse(raw['end_datetime']))
+            start: new Date(Date.parse(raw.start)),
+            end: new Date(Date.parse(raw.end))
         };
     }
 
@@ -100,8 +100,8 @@ class Calendar extends Component {
                     <Modal.Content>
                         <ReservationForm
                             roomId={this.state.selectedResourceId}
-                            startDatetime={this.state.startDatetime}
-                            endDatetime={this.state.endDatetime}
+                            start={this.state.startDatetime}
+                            end={this.state.endDatetime}
                             onRoomReserved={event => this.handleRoomReserved(event)}
                             onClose={_ => this.setState({ modalFormOpen: false })}
                             ></ReservationForm>

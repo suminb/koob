@@ -35,13 +35,13 @@ public class Reservation {
 
     @Getter
     @Setter
-    @JsonProperty("start_datetime")
-    private LocalDateTime startDatetime;
+    @JsonProperty("start")
+    private LocalDateTime start;
 
     @Getter
     @Setter
-    @JsonProperty("end_datetime")
-    private LocalDateTime endDatetime;
+    @JsonProperty("end")
+    private LocalDateTime end;
 
     @Getter
     @Setter
@@ -64,21 +64,21 @@ public class Reservation {
     @Override
     public String toString() {
         return String.format("Reservation@%d{room=%d, start=%s, end=%s",
-                getId(), getRoomId(), getStartDatetime(), getEndDatetime());
+                getId(), getRoomId(), getStart(), getEnd());
     }
 
     public long getDuration() {
-        return startDatetime.until(endDatetime, ChronoUnit.MINUTES);
+        return start.until(end, ChronoUnit.MINUTES);
     }
 
     public LocalDateTime getLastOccurence() {
         RecurringFrequency freq = getRecurringFrequency();
         if (freq.equals(RecurringFrequency.None)) {
-            return getStartDatetime();
+            return getStart();
         }
         else {
             if (freq.equals(RecurringFrequency.Weekly)) {
-                return getStartDatetime()
+                return getStart()
                         .plus(getRecurringCount() * getRecurringInterval() * 7, ChronoUnit.DAYS);
             }
             else {

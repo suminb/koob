@@ -2,6 +2,7 @@ package io.shortbread.koob.services;
 
 import io.shortbread.koob.dao.ReservationDAO;
 import io.shortbread.koob.exceptions.InvalidReservationRequestException;
+import io.shortbread.koob.models.RecurringFrequency;
 import io.shortbread.koob.models.Reservation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,21 +29,21 @@ public class ReservationService {
         return datetime.getMinute() % 30 == 0;
     }
 
-    public Reservation createReservation(int room, String subject, String description, LocalDateTime startDatetime, LocalDateTime endDatetime)
+    public Reservation createReservation(int room, String subject, String description, LocalDateTime start, LocalDateTime end)
             throws InvalidReservationRequestException {
 
-        if (!isValidHours(startDatetime)) {
+        if (!isValidHours(start)) {
             throw new InvalidReservationRequestException("Start datetime must be given in 30-min intervals");
         }
-        if (!isValidHours(endDatetime)) {
+        if (!isValidHours(end)) {
             throw new InvalidReservationRequestException("End datetime must be given in 30-min intervals");
         }
-        if (!endDatetime.isAfter(startDatetime)) {
+        if (!end.isAfter(start)) {
             throw new InvalidReservationRequestException("Start datetime must be earlier than end datetime");
         }
 
         // FIXME: We don't need the actual records; need a count only.
-        Iterator<Reservation> overlappingReservations = reservationDAO.findOverlappings(room, startDatetime, endDatetime).iterator();
+        Iterator<Reservation> overlappingReservations = reservationDAO.findOverlappings(room, start, end).iterator();
         if (overlappingReservations.hasNext()) {
             Reservation overlapped = overlappingReservations.next();
             throw new InvalidReservationRequestException(
@@ -52,8 +53,12 @@ public class ReservationService {
         reservation.setRoomId(room);
         reservation.setSubject(subject);
         reservation.setDescription(description);
-        reservation.setStartDatetime(startDatetime);
-        reservation.setEndDatetime(endDatetime);
+        reservation.setStart(start);
+        reservation.setEnd(end);
+
+        reservation.setRecurringFrequency(RecurringFrequency.None);
+        reservation.setRecurringInterval(0);
+        reservation.setRecurringCount(0);
 
         if (reservation.getDuration() < MIN_DURATION) {
             throw new InvalidReservationRequestException(

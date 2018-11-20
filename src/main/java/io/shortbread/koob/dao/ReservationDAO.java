@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 public interface ReservationDAO extends CrudRepository<Reservation, Long> {
 
     @Query(
-            value = "SELECT * FROM reservations WHERE room_id = ?1 AND end_datetime > ?2 AND start_datetime < ?3",
-            countQuery = "SELECT count(1) FROM reservations WHERE room_id = ?1 AND end_datetime > ?2 AND start_datetime < ?3",
+            value = "SELECT * FROM reservations WHERE room_id = ?1 AND `end` > ?2 AND start < ?3",
+            countQuery = "SELECT count(1) FROM reservations WHERE room_id = ?1 AND `end` > ?2 AND start < ?3",
             nativeQuery = true)
     Iterable<Reservation> findOverlappings(int room, LocalDateTime startDateTime, LocalDateTime endDateTime);
 }

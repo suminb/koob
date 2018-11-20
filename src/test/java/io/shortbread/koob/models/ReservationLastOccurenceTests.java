@@ -42,8 +42,8 @@ public class ReservationLastOccurenceTests {
     @Test
     public void testLastOccurence() {
         Reservation reservation = new Reservation();
-        reservation.setStartDatetime(LocalDateTime.parse(startDatetime));
-        reservation.setEndDatetime(LocalDateTime.parse(endDatetime));
+        reservation.setStart(LocalDateTime.parse(startDatetime));
+        reservation.setEnd(LocalDateTime.parse(endDatetime));
         reservation.setRecurringFrequency(recurringFrequency);
         reservation.setRecurringInterval(recurringInterval);
         reservation.setRecurringCount(recurringCount);
