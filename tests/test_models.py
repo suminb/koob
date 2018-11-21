@@ -1,10 +1,13 @@
 from datetime import datetime
 
+import pytest
+
 from koob.models import RecurringFrequency, Reservation
 from koob.utils import parse_date, parse_datetime
 
 
 def create_reservation(
+    resource_id=1,
     starts_at=parse_datetime('2018-11-21T15:00'),
     ends_at=parse_datetime('2018-11-21T16:00'),
     is_recurring=False,
@@ -19,6 +22,7 @@ def create_reservation(
     consistent in the context of CRUD operations.
     """
     return Reservation.create(
+        resource_id=resource_id,
         starts_at=starts_at,
         ends_at=ends_at,
         is_recurring=is_recurring,
@@ -94,3 +98,40 @@ def test_create_recurring_reservation():
 
     rs = Reservation.find_reservations_on(parse_date('2018-11-02'))
     assert rs.count() == 0
+
+
+def test_create_overlapping_reservations():
+    with pytest.raises(ValueError):
+        r1 = create_reservation(
+            resource_id=2,
+            starts_at=parse_datetime('2018-11-01T12:00'),
+            ends_at=parse_datetime('2018-11-01T13:00'),
+        )
+        r2 = create_reservation(
+            resource_id=2,
+            starts_at=parse_datetime('2018-11-01T12:30'),
+            ends_at=parse_datetime('2018-11-01T13:30'),
+        )
+
+    # Making a reservation for a different resource should not be an issue
+    r3 = create_reservation(
+        resource_id=3,
+        starts_at=parse_datetime('2018-11-01T12:30'),
+        ends_at=parse_datetime('2018-11-01T13:30'),
+    )
+
+
+@pytest.mark.skip
+def test_create_overlapping_recurring_reservations():
+    # TODO: Need to deal with overlapping recurring reservations
+    with pytest.raises(ValueError):
+        r1 = create_reservation(
+            starts_at=parse_datetime('2018-11-02T12:00'),
+            ends_at=parse_datetime('2018-11-02T13:00'),
+            recurring_frequency=RecurringFrequency.weekly,
+            recurring_count=2,
+        )
+        r2 = create_reservation(
+            starts_at=parse_datetime('2018-11-09T12:00'),
+            ends_at=parse_datetime('2018-11-09T13:00'),
+        )

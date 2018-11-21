@@ -174,6 +174,11 @@ class Reservation(db.Model, CRUDMixin):
             'recurring_frequency', RecurringFrequency.none))
         count = int(kwargs.pop('recurring_count', 0))
 
+        overlappings = cls.find_overlappings(
+            kwargs['resource_id'], kwargs['starts_at'], kwargs['ends_at'])
+        if overlappings.count() > 0:
+            raise ValueError('Overlapping reservation exists')
+
         if frequency is RecurringFrequency.none:
             kwargs['is_recurring'] = False
         elif frequency is RecurringFrequency.weekly:
@@ -187,6 +192,16 @@ class Reservation(db.Model, CRUDMixin):
             obj.register_as_recurring(frequency, count)
 
         return obj
+
+    @classmethod
+    def find_overlappings(cls, resource_id, starts_at, ends_at):
+        """
+        "SELECT * FROM reservations WHERE room_id = ?1 AND end_datetime > ?2 AND start_datetime < ?3
+        """
+        return cls.query \
+            .filter(cls.resource_id == resource_id) \
+            .filter(cls.starts_at < ends_at) \
+            .filter(cls.ends_at > starts_at)
 
     @classmethod
     def find_reservations_on(cls, date):

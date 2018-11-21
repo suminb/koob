@@ -24,7 +24,8 @@ class ReservationForm(Form):
 
     description = StringField(validators=[Length(max=1024 * 8)])
 
-    recurring_frequency = IntegerField(validators=[DataRequired()])
+    # FIXME: Not sure why zero value causes validation errors
+    recurring_frequency = IntegerField(validators=[])
 
     recurring_count = IntegerField(validators=[])
 

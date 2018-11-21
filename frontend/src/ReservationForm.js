@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Form, Label } from 'semantic-ui-react'
+import { Form, Label, Message } from 'semantic-ui-react'
 
 const recurringFrequencies = [
     {value: 0, text: 'Never'},
@@ -16,7 +16,8 @@ class ReservationForm extends Component {
         ends_at: null,
         recurring_frequency: 0,
         recurring_count: 0,
-        errors: {}
+        errors: {},
+        formErrorMessage: ''
     };
 
     constructor(props) {
@@ -61,14 +62,23 @@ class ReservationForm extends Component {
                         parent.handleClose(event);
                     });
                 }
-                else {
+                else if(resp.status >= 400 && resp.status < 500) {
                     resp.json().then(data => {
-                        console.log(resp, data);
                         parent.setState({errors: data});
                     });
                 }
+                else if(resp.status >= 500 && resp.status < 600) {
+                    resp.json().then(data => {
+                        parent.setState({formErrorMessage: data.error});
+                    });
+                }
+                else {
+                    // should not happen
+                }
             })
-            .catch(resp => {});
+            .catch(resp => {
+                alert(resp);
+            });
     }
 
     handleChange = (e, { name, value }) => {
@@ -92,68 +102,75 @@ class ReservationForm extends Component {
     }
 
     render() {
-        console.log('render', this.state.errors);
-        return <Form onSubmit={this.handleSubmit}>
-            <input type="hidden" name="resource_id" value={this.state.resource_id}/>
-            <div className="field">
-                <label>Your Name</label>
-                <div className="fields">
-                    <Form.Input placeholder="Your name" width={6}
-                        name="reserved_by" value={this.state.reserved_by} onChange={this.handleChange} />
-                    <Label basic color='red' pointing='left' width={4} className={this.errorLabelClassName('reserved_by')}>
-                        {this.formatErrorMessages('reserved_by')}
-                    </Label>
+        return <div>
+            <Form onSubmit={this.handleSubmit}>
+                <input type="hidden" name="resource_id" value={this.state.resource_id}/>
+                <div className="field">
+                    <label>Your Name</label>
+                    <div className="fields">
+                        <Form.Input placeholder="Your name" width={6}
+                            name="reserved_by" value={this.state.reserved_by} onChange={this.handleChange} />
+                        <Label basic color='red' pointing='left' width={4} className={this.errorLabelClassName('reserved_by')}>
+                            {this.formatErrorMessages('reserved_by')}
+                        </Label>
+                    </div>
                 </div>
-            </div>
-            <div className="field">
-                <label>Schedule</label>
-                <div className="fields">
-                    <Form.Input type="datetime-local" width={6}
-                        name="starts_at" value={this.state.starts_at} onChange={this.handleChange} />
-                    <Form.Input type="datetime-local" width={6}
-                        name="ends_at" value={this.state.ends_at} onChange={this.handleChange} />
-                    <Label basic color='red' pointing='left' width={4}
-                        className={this.errorLabelClassName('starts_at') && this.errorLabelClassName('ends_at')}>
-                        {this.formatErrorMessages('starts_at')}
-                        {this.formatErrorMessages('ends_at')}
-                    </Label>
+                <div className="field">
+                    <label>Schedule</label>
+                    <div className="fields">
+                        <Form.Input type="datetime-local" width={6}
+                            name="starts_at" value={this.state.starts_at} onChange={this.handleChange} />
+                        <Form.Input type="datetime-local" width={6}
+                            name="ends_at" value={this.state.ends_at} onChange={this.handleChange} />
+                        <Label basic color='red' pointing='left' width={4}
+                            className={this.errorLabelClassName('starts_at') && this.errorLabelClassName('ends_at')}>
+                            {this.formatErrorMessages('starts_at')}
+                            {this.formatErrorMessages('ends_at')}
+                        </Label>
+                    </div>
                 </div>
-            </div>
-            <div className="field">
-                <label>Recurring Event</label>
-                <div className="fields">
-                    <Form.Select placeholder='How often?' width={4} options={recurringFrequencies}
-                        name="recurring_frequency" value={this.state.recurring_frequency} onChange={this.handleChange} />
-                    <Form.Input placeholder='How many times?' width={4}
-                        name="recurring_count" value={this.state.recurring_count} onChange={this.handleChange} />
-                    <Label basic color='red' pointing='left' width={4} className={this.errorLabelClassName('recurring_count')}>
-                        {this.formatErrorMessages('recurring_count')}
-                    </Label>
+                <div className="field">
+                    <label>Recurring Event</label>
+                    <div className="fields">
+                        <Form.Select placeholder='How often?' width={4} options={recurringFrequencies}
+                            name="recurring_frequency" value={this.state.recurring_frequency} onChange={this.handleChange} />
+                        <Form.Input placeholder='How many times?' width={4}
+                            name="recurring_count" value={this.state.recurring_count} onChange={this.handleChange} />
+                        <Label basic color='red' pointing='left' width={4} className={this.errorLabelClassName('recurring_count')}>
+                            {this.formatErrorMessages('recurring_count')}
+                        </Label>
+                    </div>
                 </div>
-            </div>
-            <div className="field">
-                <div className="fields">
-                    <Form.Input placeholder="What is this meeting about?" width={12}
-                        name="title" value={this.state.subject} onChange={this.handleChange} />
-                    <Label basic color='red' pointing='left' width={4} className={this.errorLabelClassName('title')}>
-                        {this.formatErrorMessages('title')}
-                    </Label>
+                <div className="field">
+                    <div className="fields">
+                        <Form.Input placeholder="What is this meeting about?" width={12}
+                            name="title" value={this.state.subject} onChange={this.handleChange} />
+                        <Label basic color='red' pointing='left' width={4} className={this.errorLabelClassName('title')}>
+                            {this.formatErrorMessages('title')}
+                        </Label>
+                    </div>
                 </div>
-            </div>
-            <div className="field">
-                <div className="fields">
-                    <Form.TextArea placeholder="More detailed description" width={12}
-                        name="description" value={this.state.description} onChange={this.handleChange} />
-                    <Label basic color='red' pointing='left' width={4} className={this.errorLabelClassName('description')}>
-                        {this.formatErrorMessages('description')}
-                    </Label>
+                <div className="field">
+                    <div className="fields">
+                        <Form.TextArea placeholder="More detailed description" width={12}
+                            name="description" value={this.state.description} onChange={this.handleChange} />
+                        <Label basic color='red' pointing='left' width={4} className={this.errorLabelClassName('description')}>
+                            {this.formatErrorMessages('description')}
+                        </Label>
+                    </div>
                 </div>
-            </div>
-            <div className="field">
-                <button className="ui primary button">Reserve</button>
-                <button className="ui button" onClick={this.handleClose.bind(this)}>Discard</button>
-            </div>
-        </Form>
+                <div className="field">
+                    <Message negative hidden={!this.state.formErrorMessage}>
+                        <Message.Header>Something went wrong!</Message.Header>
+                        <p>{this.state.formErrorMessage}</p>
+                    </Message>
+                </div>
+                <div className="field">
+                    <button className="ui primary button">Reserve</button>
+                    <button className="ui button" onClick={this.handleClose.bind(this)}>Discard</button>
+                </div>
+            </Form>
+         </div>
     }
 }
 

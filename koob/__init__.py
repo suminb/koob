@@ -1,7 +1,7 @@
 import os
 import sys
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from logbook import Logger, StreamHandler
 
@@ -32,6 +32,10 @@ def create_app(name=__name__, config={}):
 
     from koob.api import api_module
     app.register_blueprint(api_module, url_prefix='/api')
+
+    @app.errorhandler(Exception)
+    def handle_error(error):
+        return jsonify(error=str(error)), 500
 
     return app
 
