@@ -16,4 +16,4 @@ install:
   - pip install -e .
 
 script:
-  - py.test -v tests --cov auction --cov-report term-missing
+  - py.test -v tests --cov koob --cov-report term-missing
