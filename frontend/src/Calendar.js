@@ -21,6 +21,17 @@ class Calendar extends Component {
 
     // Code is invoked after the component is mounted/inserted into the DOM tree.
     componentDidMount() {
+        // TODO: Figure out how to retrieve the current date from <Calendar> component
+        var current = new Date();
+        this.loadReservations(current);
+    }
+
+    /**
+     * Loads all reservations within a single day
+     * 
+     * @param {*} date 
+     */
+    loadReservations(date) {
         const urlPrefix = 'http://localhost:8080/api/v1';
 
         fetch(urlPrefix + '/resources')
@@ -32,8 +43,12 @@ class Calendar extends Component {
             });
 
         var url = new URL(urlPrefix + '/reservations');
-        url.searchParams.append('start_datetime', '2018-11-17');
-        url.searchParams.append('end_datetime', '2018-11-17');
+        var lowerbound = new Date(date);
+        lowerbound.setHours(0, 0, 0);
+        var upperbound = new Date(date);
+        upperbound.setHours(23, 59, 59);
+        url.searchParams.append('lowerbound', this.formatDatetime(lowerbound));
+        url.searchParams.append('upperbound', this.formatDatetime(upperbound));
 
         fetch(url)
             .then(resp => resp.json())
@@ -45,7 +60,7 @@ class Calendar extends Component {
     processReservation(raw) {
         return {
             id: raw.id,
-            resourceId: raw['room_id'],
+            resourceId: raw['resource_id'],
             title: raw.subject,
             start: new Date(Date.parse(raw['start_datetime'])),
             end: new Date(Date.parse(raw['end_datetime']))
@@ -64,6 +79,10 @@ class Calendar extends Component {
             startDatetime: this.formatDatetime(start),
             endDatetime: this.formatDatetime(end)
         });
+    }
+
+    handleRangeChange(date) {
+        this.loadReservations(date);
     }
 
     handleRoomReserved(reservation) {
@@ -92,6 +111,7 @@ class Calendar extends Component {
                     endAccessor="end"
                     onSelectEvent={event => alert(event.title)}
                     onSelectSlot={event => this.handleSelect(event)}
+                    onRangeChange={event => this.handleRangeChange(event)}
                 ></BigCalendar>
                 <Modal
                     open={this.state.modalFormOpen}
@@ -99,7 +119,7 @@ class Calendar extends Component {
                     <Modal.Header>Schedule a meeting</Modal.Header>
                     <Modal.Content>
                         <ReservationForm
-                            roomId={this.state.selectedResourceId}
+                            resourceId={this.state.selectedResourceId}
                             startDatetime={this.state.startDatetime}
                             endDatetime={this.state.endDatetime}
                             onRoomReserved={event => this.handleRoomReserved(event)}

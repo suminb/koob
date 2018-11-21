@@ -2,19 +2,19 @@ import React, {Component} from 'react';
 import { Form } from 'semantic-ui-react'
 
 const recurringFrequencies = [
-    {value: 'none', text: 'Never'},
-    {value: 'weekly', text: 'Weekly'}
+    {value: 'None', text: 'Never'},
+    {value: 'Weekly', text: 'Weekly'}
 ];
 
 class ReservationForm extends Component {
     state = {
-        roomId: 0,
-        subject: null,
-        description: null,
-        startDatetime: null,
-        endDatetime: null,
-        recurringFrequency: 'none',
-        recurringCount: null
+        resourceId: 0,
+        title: '',
+        description: '',
+        start: null,
+        end: null,
+        recurringFrequency: 'None',
+        recurringCount: 0
     };
 
     constructor(props) {
@@ -32,18 +32,18 @@ class ReservationForm extends Component {
             this.props.onClose();
     }
 
-    handleSubmit(event) {
+    handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.target);
         const parent = this;
 
         // FIXME: Code refactoring needed
-        data.set('start_datetime', data.get('startDatetime'));
-        data.set('end_datetime', data.get('endDatetime'));
-        data.set('recurring_frequency', data.get('recurringFrequency'));
-        data.set('recurring_count', data.get('recurringCount'));
+        // FIXME: Not sure why `data.get('recurringFrequency')` returns null
+        data.set('recurring_frequency', this.state.recurringFrequency);
+        data.set('recurring_interval', 1);
+        data.set('recurring_count', this.state.recurringCount);
 
-        fetch('http://localhost:8087/reservations', {method: 'POST', body: data})
+        fetch('http://localhost:8080/api/v1/reservations', {method: 'POST', body: data})
             .then(resp => {
                 if (resp.status == 200) {
                     resp.json().then(data => {
@@ -64,18 +64,19 @@ class ReservationForm extends Component {
 
     handleChange = (e, { name, value }) => {
         this.setState({ [name]: value });
+        console.log(this.state);
     }
 
     render() {
-        return <form className="ui form" onSubmit={this.handleSubmit.bind(this)}>
-            <input type="hidden" name="room_id" value={this.state.roomId}/>
+        return <Form onSubmit={this.handleSubmit}>
+            <input type="hidden" name="resource_id" value={this.state.resourceId}/>
             <div className="field">
                 <label>Schedule</label>
                 <div className="fields">
                     <Form.Input type="datetime-local" width={8}
-                        name="startDatetime" value={this.state.startDatetime} onChange={this.handleChange} />
+                        name="starts_at" value={this.state.startDatetime} onChange={this.handleChange} />
                     <Form.Input type="datetime-local" width={8}
-                        name="endDatetime" value={this.state.endDatetime} onChange={this.handleChange} />
+                        name="ends_at" value={this.state.endDatetime} onChange={this.handleChange} />
                 </div>
             </div>
             <div className="field">
@@ -89,7 +90,7 @@ class ReservationForm extends Component {
             </div>
             <Form.Group>
                 <Form.Input placeholder="What is this meeting about?" width={16}
-                    name="subject" value={this.state.subject} onChange={this.handleChange} />
+                    name="title" value={this.state.subject} onChange={this.handleChange} />
             </Form.Group>
             <Form.Group>
                 <Form.TextArea placeholder="More detailed description" width={16}
@@ -103,7 +104,7 @@ class ReservationForm extends Component {
                     Discard
                 </button>
             </div>
-        </form>
+        </Form>
     }
 }
 
