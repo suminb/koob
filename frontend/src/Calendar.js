@@ -14,20 +14,20 @@ class Calendar extends Component {
         startDatetime: null,
         endDatetime: null,
 
-        rooms: [],
+        resources: [],
         reservations: [],
         reservationsDict: {}
     };
 
     // Code is invoked after the component is mounted/inserted into the DOM tree.
     componentDidMount() {
-        const urlPrefix = 'http://localhost:8087';
+        const urlPrefix = 'http://localhost:8080/api/v1';
 
-        fetch(urlPrefix + '/rooms')
+        fetch(urlPrefix + '/resources')
             .then(resp => resp.json())
             .then(data => {
                 this.setState({
-                    rooms: data.map(r => {return {roomId: r.id, roomName: r.name}})
+                    resources: data.resources.map(r => {return {resourceId: r.id, resourceTitle: r.title}})
                 })
             });
 
@@ -73,7 +73,7 @@ class Calendar extends Component {
     }
 
     render() {
-        if (this.state.rooms.length == 0) {
+        if (this.state.resources.length == 0) {
             return <div>There is no meeting room available</div>;
         }
         else {
@@ -85,9 +85,9 @@ class Calendar extends Component {
                     defaultView={BigCalendar.Views.DAY}
                     views={['day']}
                     step={30}
-                    resources={this.state.rooms}
-                    resourceIdAccessor="roomId"
-                    resourceTitleAccessor="roomName"
+                    resources={this.state.resources}
+                    resourceIdAccessor="resourceId"
+                    resourceTitleAccessor="resourceTitle"
                     startAccessor="start"
                     endAccessor="end"
                     onSelectEvent={event => alert(event.title)}
