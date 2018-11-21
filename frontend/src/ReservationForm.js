@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Form } from 'semantic-ui-react'
+import { Form, Label } from 'semantic-ui-react'
 
 const recurringFrequencies = [
     {value: 0, text: 'Never'},
@@ -12,10 +12,11 @@ class ReservationForm extends Component {
         reserved_by: '',
         title: '',
         description: '',
-        start: null,
-        end: null,
+        starts_at: null,
+        ends_at: null,
         recurring_frequency: 0,
-        recurring_count: 0
+        recurring_count: 0,
+        errors: {}
     };
 
     constructor(props) {
@@ -24,7 +25,12 @@ class ReservationForm extends Component {
     }
 
     componentDidMount() {
-        this.setState(this.props);
+        const props = this.props;
+        //this.setState(this.props);
+        this.setState({
+            starts_at: props.startsAt,
+            ends_at: props.endsAt
+        });
     }
 
     handleClose(event) {
@@ -57,6 +63,7 @@ class ReservationForm extends Component {
                 else {
                     resp.json().then(data => {
                         console.log(resp, data);
+                        parent.setState({errors: data});
                     });
                 }
             })
@@ -68,21 +75,37 @@ class ReservationForm extends Component {
         console.log(this.state);
     }
 
+    errorLabelClassName(key) {
+        var messages = this.state.errors[key];
+        return (messages && messages.length > 0) ? '' : 'hidden';
+    }
+
     render() {
+        console.log('render', this.state.errors);
         return <Form onSubmit={this.handleSubmit}>
             <input type="hidden" name="resource_id" value={this.state.resourceId}/>
             <div className="field">
                 <label>Your Name</label>
-                <Form.Input placeholder="Your name" width={8}
-                    name="reserved_by" value={this.state.reserved_by} onChange={this.handleChange} />
+                <div className="fields">
+                    <Form.Input placeholder="Your name" width={6}
+                        name="reserved_by" value={this.state.reserved_by} onChange={this.handleChange} />
+                    <Label basic color='red' pointing='left' width={4} className={this.errorLabelClassName('reserved_by')}>
+                        {this.state.errors.reserved_by}
+                    </Label>
+                </div>
             </div>
             <div className="field">
                 <label>Schedule</label>
                 <div className="fields">
-                    <Form.Input type="datetime-local" width={8}
-                        name="starts_at" value={this.state.startDatetime} onChange={this.handleChange} />
-                    <Form.Input type="datetime-local" width={8}
-                        name="ends_at" value={this.state.endDatetime} onChange={this.handleChange} />
+                    <Form.Input type="datetime-local" width={6}
+                        name="starts_at" value={this.state.starts_at} onChange={this.handleChange} />
+                    <Form.Input type="datetime-local" width={6}
+                        name="ends_at" value={this.state.ends_at} onChange={this.handleChange} />
+                    <Label basic color='red' pointing='left' width={4}
+                        className={this.errorLabelClassName('starts_at') && this.errorLabelClassName('ends_at')}>
+                        <div>Starts at: {this.state.errors.starts_at}</div>
+                        <div>Ends at: {this.state.errors.ends_at}</div>
+                    </Label>
                 </div>
             </div>
             <div className="field">
@@ -94,21 +117,22 @@ class ReservationForm extends Component {
                     name="recurring_count" value={this.state.recurring_count} onChange={this.handleChange} />
                 </div>
             </div>
-            <Form.Group>
-                <Form.Input placeholder="What is this meeting about?" width={16}
-                    name="title" value={this.state.subject} onChange={this.handleChange} />
-            </Form.Group>
-            <Form.Group>
-                <Form.TextArea placeholder="More detailed description" width={16}
-                    name="description" value={this.state.description} onChange={this.handleChange} />
-            </Form.Group>
             <div className="field">
-                <button className="ui primary button">
-                    Save
-                </button>
-                <button className="ui button" onClick={this.handleClose.bind(this)}>
-                    Discard
-                </button>
+                <div className="fields">
+                    <Form.Input placeholder="What is this meeting about?" width={12}
+                        name="title" value={this.state.subject} onChange={this.handleChange} />
+                    <Label basic color='red' pointing='left' width={4} className={this.errorLabelClassName('title')}>
+                        {this.state.errors.title}
+                    </Label>
+                </div>
+            </div>
+            <div className="field">
+                <Form.TextArea placeholder="More detailed description" width={12}
+                    name="description" value={this.state.description} onChange={this.handleChange} />
+            </div>
+            <div className="field">
+                <button className="ui primary button">Reserve</button>
+                <button className="ui button" onClick={this.handleClose.bind(this)}>Discard</button>
             </div>
         </Form>
     }

@@ -120,8 +120,8 @@ class Calendar extends Component {
                     <Modal.Content>
                         <ReservationForm
                             resourceId={this.state.selectedResourceId}
-                            startDatetime={this.state.startDatetime}
-                            endDatetime={this.state.endDatetime}
+                            startsAt={this.state.startDatetime}
+                            endsAt={this.state.endDatetime}
                             onRoomReserved={event => this.handleRoomReserved(event)}
                             onClose={_ => this.setState({ modalFormOpen: false })}
                             ></ReservationForm>
