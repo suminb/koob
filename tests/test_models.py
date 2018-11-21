@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytest
 
 from koob.models import RecurringFrequency, Reservation
@@ -65,7 +63,7 @@ def test_find_reservations():
 
 
 def test_create_recurring_reservation():
-    reservation = create_reservation(
+    create_reservation(
         starts_at=parse_datetime('2018-11-01T12:00'),
         ends_at=parse_datetime('2018-11-01T13:00'),
         title='Weekly Event 1',
@@ -102,19 +100,19 @@ def test_create_recurring_reservation():
 
 def test_create_overlapping_reservations():
     with pytest.raises(ValueError):
-        r1 = create_reservation(
+        create_reservation(
             resource_id=2,
             starts_at=parse_datetime('2018-11-01T12:00'),
             ends_at=parse_datetime('2018-11-01T13:00'),
         )
-        r2 = create_reservation(
+        create_reservation(
             resource_id=2,
             starts_at=parse_datetime('2018-11-01T12:30'),
             ends_at=parse_datetime('2018-11-01T13:30'),
         )
 
     # Making a reservation for a different resource should not be an issue
-    r3 = create_reservation(
+    create_reservation(
         resource_id=3,
         starts_at=parse_datetime('2018-11-01T12:30'),
         ends_at=parse_datetime('2018-11-01T13:30'),
@@ -125,13 +123,13 @@ def test_create_overlapping_reservations():
 def test_create_overlapping_recurring_reservations():
     # TODO: Need to deal with overlapping recurring reservations
     with pytest.raises(ValueError):
-        r1 = create_reservation(
+        create_reservation(
             starts_at=parse_datetime('2018-11-02T12:00'),
             ends_at=parse_datetime('2018-11-02T13:00'),
             recurring_frequency=RecurringFrequency.weekly,
             recurring_count=2,
         )
-        r2 = create_reservation(
+        create_reservation(
             starts_at=parse_datetime('2018-11-09T12:00'),
             ends_at=parse_datetime('2018-11-09T13:00'),
         )

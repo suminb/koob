@@ -1,5 +1,4 @@
 from koob.models import RecurringFrequency
-from koob.utils import parse_datetime as pd
 
 
 DT_FORMAT = '%Y-%m-%d %H:%M:%S'
