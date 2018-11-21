@@ -15,5 +15,8 @@ install:
   - pip install -r tests/requirements.txt
   - pip install -e .
 
+before_script:
+  - flake8 koob tests
+
 script:
   - py.test -v tests --cov koob --cov-report term-missing
