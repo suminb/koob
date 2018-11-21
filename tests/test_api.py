@@ -39,7 +39,7 @@ def test_initially_empty_reservation_list(testapp):
 
 
 def test_create_reservation(testapp):
-    resp = create_reservation(testapp)
+    resp = create_reservation(testapp, resource_id=11)
     assert resp.status_code == 200
     assert resp.json['title'] == 'Meeting'
     assert resp.json['description'] == 'Some description about this meeting'
@@ -48,16 +48,16 @@ def test_create_reservation(testapp):
 
 def test_reservation_list(testapp):
     # Looking for previously made reservations
-    resp = testapp.get('/api/v1/reservations')
+    resp = testapp.get('/api/v1/reservations?date=2018-11-21')
     assert resp.status_code == 200
     assert len(resp.json['reservations']) == 1
 
     # Make addtional reservations
-    create_reservation(testapp)
-    create_reservation(testapp)
-    create_reservation(testapp)
+    create_reservation(testapp, resource_id=12)
+    create_reservation(testapp, resource_id=13)
+    create_reservation(testapp, resource_id=14)
 
-    resp = testapp.get('/api/v1/reservations')
+    resp = testapp.get('/api/v1/reservations?date=2018-11-21')
     assert resp.status_code == 200
     assert len(resp.json['reservations']) == 4
 
