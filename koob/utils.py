@@ -26,3 +26,12 @@ def make_day_bounds(dt):
     """
     return (dt.replace(hour=0, minute=0, second=0, microsecond=0),
             dt.replace(hour=23, minute=59, second=0, microsecond=0))
+
+
+def replace_date(source_date, target_date):
+    """Replaces `source_date` with respect to `target_date`, replacing year,
+    month, day while preserving all other time information. The purpose of this
+    method is to provide valid date information for recurring reservations.
+    """
+    return source_date.replace(
+        year=target_date.year, month=target_date.month, day=target_date.day)

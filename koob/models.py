@@ -9,7 +9,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import bindparam
 
-from koob.utils import make_day_bounds
+from koob.utils import make_day_bounds, replace_date
 
 
 db = SQLAlchemy()
@@ -82,7 +82,7 @@ class KoobJSONEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
             return obj.strftime('%Y-%m-%dT%H:%M')
-        elif isinstance(obj, (Reservation, Resource, WeeklyRecurrence)):
+        elif isinstance(obj, (Reservation, Resource, Recurrence)):
             return dict(obj)
         else:
             return super(JSONEncoder, self).default(obj)
@@ -102,14 +102,21 @@ class Reservation(db.Model, CRUDMixin):
 
     resource_id = db.Column(db.Integer, db.ForeignKey('resources.id'))
     created_at = db.Column(db.DateTime)
-    starts_at = db.Column(db.DateTime)
-    ends_at = db.Column(db.DateTime)
+    starts_at_ = db.Column('starts_at', db.DateTime)
+    ends_at_ = db.Column('ends_at', db.DateTime)
     is_recurring = db.Column(db.Boolean)
     reserved_by = db.Column(db.String)
     title = db.Column(db.String)
     description = db.Column(db.Text)
     recurrence = db.relationship(
         'Recurrence', uselist=False, back_populates='reservation')
+
+    def __init__(self, *args, **kwargs):
+        super(Reservation, self).__init__(*args, **kwargs)
+        if self.is_recurring:
+            self.recurring_date = self.starts_at
+        else:
+            self.recurring_date = None
 
     def register_as_recurring(self, frequency, count):
         if frequency is RecurringFrequency.weekly:
@@ -122,6 +129,40 @@ class Reservation(db.Model, CRUDMixin):
         else:
             raise NotImplementedError
 
+    def set_recurring_date(self, date):
+        self.recurring_date = date
+        return self
+
+    @hybrid_property
+    def starts_at(self):
+        try:
+            return replace_date(self.starts_at_, self.recurring_date)
+        except AttributeError:
+            return self.starts_at_
+
+    @starts_at.setter
+    def starts_at(self, value):
+        self.starts_at_ = value
+
+    @starts_at.expression
+    def starts_at(cls):
+        return cls.starts_at_
+
+    @hybrid_property
+    def ends_at(self):
+        try:
+            return replace_date(self.ends_at_, self.recurring_date)
+        except AttributeError:
+            return self.ends_at_
+
+    @ends_at.setter
+    def ends_at(self, value):
+        self.ends_at_ = value
+
+    @ends_at.expression
+    def ends_at(cls):
+        return cls.ends_at_
+
     @property
     def duration(self):
         """Duration of the reservation in terms of minutes."""
@@ -129,8 +170,9 @@ class Reservation(db.Model, CRUDMixin):
 
     @classmethod
     def create(cls, commit=True, ignore_if_exists=False, **kwargs):
-        frequency = kwargs.pop('recurring_frequency', RecurringFrequency.none)
-        count = kwargs.pop('recurring_count', 0)
+        frequency = int(kwargs.pop(
+            'recurring_frequency', RecurringFrequency.none))
+        count = int(kwargs.pop('recurring_count', 0))
 
         if frequency is RecurringFrequency.none:
             kwargs['is_recurring'] = False
@@ -167,7 +209,7 @@ class Reservation(db.Model, CRUDMixin):
 
         # NOTE: This may lead to poor performance. See Recurrence.ends_at() for
         # more detailed explanation.
-        reservations = [r for r in reservations.all()
+        reservations = [r.set_recurring_date(date) for r in reservations.all()
                         if not r.is_recurring or r.recurrence.ends_at >= lower]
 
         # NOTE: Normally, we would like to return a query object here, however,
@@ -192,7 +234,7 @@ class Recurrence(db.Model, CRUDMixin):
 
     @hybrid_property
     def ends_at(self):
-        return self.reservation.ends_at + \
+        return self.reservation.ends_at_ + \
             timedelta(days=self.frequency * (self.count - 1))
 
     @ends_at.expression
@@ -200,7 +242,7 @@ class Recurrence(db.Model, CRUDMixin):
         # NOTE: Ideall, we would like to do something like this, however,
         # unfortunately, SQLite does not support date/time operations based on
         # column values. So we will do this on the application code.
-        return cls.reservation.ends_at + (cls.frequency * (cls.count - 1))
+        return cls.reservation.ends_at_ + (cls.frequency * (cls.count - 1))
 
 
 @dataclass

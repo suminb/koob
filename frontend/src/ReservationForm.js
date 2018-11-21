@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import { Form } from 'semantic-ui-react'
 
 const recurringFrequencies = [
-    {value: 'None', text: 'Never'},
-    {value: 'Weekly', text: 'Weekly'}
+    {value: 0, text: 'Never'},
+    {value: 7, text: 'Weekly'}
 ];
 
 class ReservationForm extends Component {
@@ -14,8 +14,8 @@ class ReservationForm extends Component {
         description: '',
         start: null,
         end: null,
-        recurringFrequency: 'None',
-        recurringCount: 0
+        recurring_frequency: 0,
+        recurring_count: 0
     };
 
     constructor(props) {
@@ -39,10 +39,10 @@ class ReservationForm extends Component {
         const parent = this;
 
         // FIXME: Code refactoring needed
-        // FIXME: Not sure why `data.get('recurringFrequency')` returns null
-        data.set('recurring_frequency', this.state.recurringFrequency);
+        // FIXME: Not sure why `data.get('recurring_frequency')` returns null
+        data.set('recurring_frequency', this.state.recurring_frequency);
         data.set('recurring_interval', 1);
-        data.set('recurring_count', this.state.recurringCount);
+        data.set('recurring_count', this.state.recurring_count);
 
         fetch('http://localhost:8080/api/v1/reservations', {method: 'POST', body: data})
             .then(resp => {
@@ -89,9 +89,9 @@ class ReservationForm extends Component {
                 <label>Recurring Event</label>
                 <div className="fields">
                 <Form.Select placeholder='How often?' width={4} options={recurringFrequencies}
-                    name="recurringFrequency" value={this.state.recurringFrequency} onChange={this.handleChange} />
+                    name="recurring_frequency" value={this.state.recurring_frequency} onChange={this.handleChange} />
                 <Form.Input placeholder='How many times?' width={4}
-                    name="recurringCount" value={this.state.recurringCount} onChange={this.handleChange} />
+                    name="recurring_count" value={this.state.recurring_count} onChange={this.handleChange} />
                 </div>
             </div>
             <Form.Group>
