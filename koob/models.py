@@ -3,11 +3,9 @@ from datetime import datetime, timedelta
 
 from flask.json import JSONEncoder
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Interval, and_, or_
+from sqlalchemy import and_, or_
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.sql import func
-from sqlalchemy.sql.expression import bindparam
 
 from koob.utils import make_day_bounds, replace_date
 
@@ -27,7 +25,7 @@ class CRUDMixin(object):
 
         if hasattr(instance, 'created_at') \
                 and getattr(instance, 'created_at') is None:
-            instance.created_at  = datetime.utcnow()
+            instance.created_at = datetime.now()
 
         try:
             return instance.save(commit=commit)
@@ -186,7 +184,8 @@ class Reservation(db.Model, CRUDMixin):
         else:
             raise NotImplementedError
 
-        obj = super(Reservation, cls).create(commit, ignore_if_exists, **kwargs)
+        obj = super(Reservation, cls) \
+            .create(commit, ignore_if_exists, **kwargs)
 
         if obj.is_recurring:
             obj.register_as_recurring(frequency, count)
@@ -195,9 +194,6 @@ class Reservation(db.Model, CRUDMixin):
 
     @classmethod
     def find_overlappings(cls, resource_id, starts_at, ends_at):
-        """
-        "SELECT * FROM reservations WHERE room_id = ?1 AND end_datetime > ?2 AND start_datetime < ?3
-        """
         return cls.query \
             .filter(cls.resource_id == resource_id) \
             .filter(cls.starts_at < ends_at) \
@@ -208,7 +204,7 @@ class Reservation(db.Model, CRUDMixin):
         lower, upper = make_day_bounds(date)
         reservations = cls.query.outerjoin(Recurrence).filter(or_(
             and_(
-                cls.is_recurring == True,
+                cls.is_recurring == True,  # noqa (E712)
                 Recurrence.weekday == date.weekday(),
                 # NOTE: See Recurrence.ends_at()
                 # Recurrence.ends_at >= lower

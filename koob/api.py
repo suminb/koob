@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from koob.forms import ReservationForm
-from koob.models import RecurringFrequency, Reservation, Resource
+from koob.models import Reservation, Resource
 from koob.utils import parse_date
 
 
