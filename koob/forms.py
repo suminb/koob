@@ -11,3 +11,6 @@ class ReservationForm(Form):
     reserved_by = StringField(validators=[DataRequired()])
     title = StringField(validators=[DataRequired()])
     description = StringField()
+
+    recurring_frequency = StringField(validators=[DataRequired()])
+    recurring_count = StringField(validators=[])

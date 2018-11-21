@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from koob.forms import ReservationForm
-from koob.models import Reservation, Resource
+from koob.models import RecurringFrequency, Reservation, Resource
 from koob.utils import parse_date
 
 
@@ -30,9 +30,9 @@ def create_reservation_v1():
         reservation = Reservation.create(**{
             key: getattr(form, key).data for key in [
                 'resource_id', 'starts_at', 'ends_at', 'reserved_by',
-                'title', 'description']
+                'title', 'description',
+                'recurring_frequency', 'recurring_count']
         })
-
         return jsonify(reservation)
     else:
         return jsonify(form.errors), 400
