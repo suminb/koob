@@ -82,7 +82,7 @@ class Calendar extends Component {
     }
 
     handleRangeChange(date) {
-        this.loadReservations(date[0]);
+        this.loadReservations(date.length > 0 ? date[0] : new Date());
     }
 
     handleRoomReserved(reservation) {
