@@ -1,6 +1,7 @@
 package io.shortbread.koob;
 
 import io.shortbread.koob.exceptions.InvalidRequestException;
+import io.shortbread.koob.models.RecurringFrequency;
 import io.shortbread.koob.models.Reservation;
 import io.shortbread.koob.models.Room;
 import io.shortbread.koob.services.ReservationService;
@@ -46,8 +47,13 @@ public class MainController {
 
     @CrossOrigin(CORS_SRC)
     @GetMapping("/reservations")
-    public Iterable<Reservation> getAllReservations() {
-        return reservationService.getAllReservations();
+    public Iterable<Reservation> getAllReservations(
+            @RequestParam(value = "lowerbound")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime lowerbound,
+            @RequestParam(value = "upperbound")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime upperbound
+    ) {
+        return reservationService.findReservationsBetween(lowerbound, upperbound);
     }
 
     /**
@@ -66,8 +72,13 @@ public class MainController {
             @RequestParam(value = "start")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
             @RequestParam(value = "end")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end,
+            @RequestParam(value = "recurring_frequency") RecurringFrequency recurringFrequency,
+            @RequestParam(value = "recurring_interval") int recurringInterval,
+            @RequestParam(value = "recurring_count") int recurringCount
     ) throws InvalidRequestException {
-        return reservationService.createReservation(roomId, subject, description, start, end);
+        return reservationService.createReservation(
+                roomId, subject, description, start, end,
+                recurringFrequency, recurringInterval, recurringCount);
     }
 }

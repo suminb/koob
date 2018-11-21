@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ReservationService {
@@ -29,8 +31,10 @@ public class ReservationService {
         return datetime.getMinute() % 30 == 0;
     }
 
-    public Reservation createReservation(int room, String subject, String description, LocalDateTime start, LocalDateTime end)
-            throws InvalidReservationRequestException {
+    public Reservation createReservation(
+            int room, String subject, String description, LocalDateTime start, LocalDateTime end,
+            RecurringFrequency recurringFrequency, int recurringInterval, int recurringCount
+    ) throws InvalidReservationRequestException {
 
         if (!isValidHours(start)) {
             throw new InvalidReservationRequestException("Start datetime must be given in 30-min intervals");
@@ -56,9 +60,10 @@ public class ReservationService {
         reservation.setStart(start);
         reservation.setEnd(end);
 
-        reservation.setRecurringFrequency(RecurringFrequency.None);
-        reservation.setRecurringInterval(0);
-        reservation.setRecurringCount(0);
+        // TODO: Validation
+        reservation.setRecurringProperties(recurringFrequency, recurringInterval, recurringCount);
+
+        // TODO: Make weekly_recurrences entry
 
         if (reservation.getDuration() < MIN_DURATION) {
             throw new InvalidReservationRequestException(
@@ -71,5 +76,13 @@ public class ReservationService {
 
     public Iterable<Reservation> getAllReservations() {
         return reservationDAO.findAll();
+    }
+
+    public Iterable<Reservation> findReservationsBetween(LocalDateTime lowerbound, LocalDateTime upperbound) {
+        // TODO: Figure out weekday and query for it (weekly_recurrences)
+        Iterable<Reservation> candidates = reservationDAO.findReservationsBetween(lowerbound, upperbound);
+        return StreamSupport.stream(candidates.spliterator(), false)
+                .filter(reservation -> reservation.isBetween(lowerbound, upperbound, true))
+                .collect(Collectors.toList());
     }
 }

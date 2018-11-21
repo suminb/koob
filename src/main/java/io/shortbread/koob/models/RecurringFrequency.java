@@ -8,9 +8,9 @@ public enum RecurringFrequency {
     Annually(4),
     Custom(5);
 
-    private int type;
+    private int value;
 
-    RecurringFrequency(int type) {
-        this.type = type;
+    RecurringFrequency(int value) {
+        this.value = value;
     }
 }

@@ -44,6 +44,14 @@ public class Reservation {
     @JsonProperty("end")
     private LocalDateTime end;
 
+    /**
+     * Represents the rearmost moment of all recurrences. This will be used for quickly searching for reservations
+     * within a certain time window.
+     */
+    @Getter
+    @JsonProperty("closing")
+    private LocalDateTime closing;
+
     @Getter
     @JsonProperty("recurring_frequency")
     private RecurringFrequency recurringFrequency;
@@ -131,5 +139,43 @@ public class Reservation {
             }
         };
         return () -> iter;
+    }
+
+    /**
+     * Checks if this reservation is within a particular time window. This does not check for all recurring
+     * reservations.
+     *
+     * @param lowerbound
+     * @param upperbound
+     * @return
+     */
+    public boolean isBetween(LocalDateTime lowerbound, LocalDateTime upperbound) {
+        return (getStart().isAfter(lowerbound) && getStart().isBefore(upperbound)) ||
+               (getEnd().isAfter(lowerbound) && getEnd().isBefore(upperbound)) ||
+               (lowerbound.isAfter(getStart()) && lowerbound.isBefore(getEnd())) ||
+               (upperbound.isAfter(getStart()) && upperbound.isBefore(getEnd()));
+    }
+
+    /**
+     * Checks if this reservation is within a particular time window. If {@code checkRecurrences} is true, it checks
+     * for all recurring reservations. If any of the recurring reservations occurs between the given time window, it
+     * returns true.
+     *
+     * @param lowerbound
+     * @param upperbound
+     * @param checkRecurrences
+     * @return
+     */
+    public boolean isBetween(LocalDateTime lowerbound, LocalDateTime upperbound, boolean checkRecurrences) {
+        if (checkRecurrences) {
+            for (Reservation r : synthesizeAllOccurences()) {
+                if (r.isBetween(lowerbound, upperbound))
+                    return true;
+            }
+            return false;
+        }
+        else {
+            return isBetween(lowerbound, upperbound);
+        }
     }
 }
