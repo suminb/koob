@@ -33,6 +33,7 @@ def run():
 
 @cli.command()
 def create_db():
+    """Initializes database, insert some sample data."""
     app = create_app()
     with app.app_context():
         db.create_all()
