@@ -35,7 +35,11 @@ def create_app(name=__name__, config={}):
 
     @app.errorhandler(Exception)
     def handle_error(error):
-        return jsonify(error=str(error)), 500
+        try:
+            status_code = error.code
+        except AttributeError:
+            status_code = 500
+        return jsonify(error=str(error)), status_code
 
     return app
 
