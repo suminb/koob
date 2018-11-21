@@ -1,3 +1,4 @@
+from koob.models import RecurringFrequency
 from koob.utils import parse_datetime as pd
 
 
@@ -6,22 +7,28 @@ DT_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 def create_reservation(
     testapp,
+    resource_id=1,
     starts_at='2018-11-21T15:00',
     ends_at='2018-11-21T16:00',
     reserved_by='Tony Stark',
     title='Meeting',
     description='Some description about this meeting',
+    recurring_frequency=RecurringFrequency.none,
+    recurring_count=0,
 ):
     """The verb *make* is generally used with reservations (e.g., make a
     reservation), but we decided to use *create* as a verb to keep things
     consistent in the context of CRUD operations.
     """
     data = {
+        'resource_id': resource_id,
         'starts_at': starts_at,
         'ends_at': ends_at,
         'reserved_by': reserved_by,
         'title': title,
         'description': description,
+        'recurring_frequency': recurring_frequency,
+        'recurring_count': recurring_count,
     }
     return testapp.post('/api/v1/reservations', data=data)
 
@@ -37,8 +44,6 @@ def test_create_reservation(testapp):
     assert resp.json['title'] == 'Meeting'
     assert resp.json['description'] == 'Some description about this meeting'
     assert resp.json['reserved_by'] == 'Tony Stark'
-    assert pd(resp.json['starts_at'], DT_FORMAT) == pd('2018-11-21T15:00')
-    assert pd(resp.json['ends_at'], DT_FORMAT) == pd('2018-11-21T16:00')
 
 
 def test_reservation_list(testapp):
