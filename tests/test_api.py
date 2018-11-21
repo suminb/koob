@@ -63,3 +63,13 @@ def test_reservation_list(testapp):
 
 def test_create_recurring_reservation(testapp):
     pass
+
+
+def test_delete_reservation(testapp):
+    resp = create_reservation(testapp, resource_id=21)
+    rid = resp.json['id']
+    resp = testapp.delete(f'/api/v1/reservations/{rid}')
+    assert resp.status_code == 200
+
+    resp = testapp.delete(f'/api/v1/reservations/{rid}')
+    assert resp.status_code == 404

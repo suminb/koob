@@ -36,3 +36,11 @@ def create_reservation_v1():
         return jsonify(reservation)
     else:
         return jsonify(form.errors), 400
+
+
+@api_module.route('/v1/reservations/<reservation_id>', methods=['DELETE'])
+def delete_reservation_v1(reservation_id):
+    reservation = Reservation.query.get_or_404(reservation_id)
+    reservation.delete()
+
+    return ''
