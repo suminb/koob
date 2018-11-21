@@ -239,8 +239,8 @@ class Recurrence(db.Model, CRUDMixin):
 
     @ends_at.expression
     def ends_at(cls):
-        # NOTE: Ideall, we would like to do something like this, however,
-        # unfortunately, SQLite does not support date/time operations based on
+        # NOTE: Ideally, we would like to do something like this, however,
+        # SQLite unfortunately does not support date/time operations based on
         # column values. So we will do this on the application code.
         return cls.reservation.ends_at_ + (cls.frequency * (cls.count - 1))
 
