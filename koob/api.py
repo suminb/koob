@@ -29,7 +29,8 @@ def create_reservation_v1():
     if form.validate():
         reservation = Reservation.create(**{
             key: getattr(form, key).data for key in [
-                'starts_at', 'ends_at', 'reserved_by', 'title', 'description']
+                'resource_id', 'starts_at', 'ends_at', 'reserved_by',
+                'title', 'description']
         })
 
         return jsonify(reservation)
