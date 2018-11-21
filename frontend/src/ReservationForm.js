@@ -2,19 +2,19 @@ import React, {Component} from 'react';
 import { Form } from 'semantic-ui-react'
 
 const recurringFrequencies = [
-    {value: 'none', text: 'Never'},
-    {value: 'weekly', text: 'Weekly'}
+    {value: 'None', text: 'Never'},
+    {value: 'Weekly', text: 'Weekly'}
 ];
 
 class ReservationForm extends Component {
     state = {
         roomId: 0,
-        subject: null,
-        description: null,
+        subject: '',
+        description: '',
         start: null,
         end: null,
-        recurringFrequency: 'none',
-        recurringCount: null
+        recurringFrequency: 'None',
+        recurringCount: 0
     };
 
     constructor(props) {
@@ -32,14 +32,16 @@ class ReservationForm extends Component {
             this.props.onClose();
     }
 
-    handleSubmit(event) {
+    handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.target);
         const parent = this;
 
         // FIXME: Code refactoring needed
-        data.set('recurring_frequency', data.get('recurringFrequency'));
-        data.set('recurring_count', data.get('recurringCount'));
+        // FIXME: Not sure why `data.get('recurringFrequency')` returns null
+        data.set('recurring_frequency', this.state.recurringFrequency);
+        data.set('recurring_interval', 1);
+        data.set('recurring_count', this.state.recurringCount);
 
         fetch('http://localhost:8087/reservations', {method: 'POST', body: data})
             .then(resp => {
@@ -62,10 +64,11 @@ class ReservationForm extends Component {
 
     handleChange = (e, { name, value }) => {
         this.setState({ [name]: value });
+        console.log(this.state);
     }
 
     render() {
-        return <form className="ui form" onSubmit={this.handleSubmit.bind(this)}>
+        return <Form onSubmit={this.handleSubmit}>
             <input type="hidden" name="room_id" value={this.state.roomId}/>
             <div className="field">
                 <label>Schedule</label>
@@ -101,7 +104,7 @@ class ReservationForm extends Component {
                     Discard
                 </button>
             </div>
-        </form>
+        </Form>
     }
 }
 

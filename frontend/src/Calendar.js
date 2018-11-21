@@ -21,6 +21,17 @@ class Calendar extends Component {
 
     // Code is invoked after the component is mounted/inserted into the DOM tree.
     componentDidMount() {
+        // TODO: Figure out how to retrieve the current date from <Calendar> component
+        var current = new Date();
+        this.loadReservations(current);
+    }
+
+    /**
+     * Loads all reservations within a single day
+     * 
+     * @param {*} date 
+     */
+    loadReservations(date) {
         const urlPrefix = 'http://localhost:8087';
 
         fetch(urlPrefix + '/rooms')
@@ -32,8 +43,12 @@ class Calendar extends Component {
             });
 
         var url = new URL(urlPrefix + '/reservations');
-        url.searchParams.append('start', '2018-11-17');
-        url.searchParams.append('end', '2018-11-17');
+        var lowerbound = new Date(date);
+        lowerbound.setHours(0, 0, 0);
+        var upperbound = new Date(date);
+        upperbound.setHours(23, 59, 59);
+        url.searchParams.append('lowerbound', this.formatDatetime(lowerbound));
+        url.searchParams.append('upperbound', this.formatDatetime(upperbound));
 
         fetch(url)
             .then(resp => resp.json())
@@ -66,6 +81,10 @@ class Calendar extends Component {
         });
     }
 
+    handleRangeChange(date) {
+        this.loadReservations(date);
+    }
+
     handleRoomReserved(reservation) {
         this.setState({
             reservations: this.state.reservations.concat(this.processReservation(reservation))
@@ -92,6 +111,7 @@ class Calendar extends Component {
                     endAccessor="end"
                     onSelectEvent={event => alert(event.title)}
                     onSelectSlot={event => this.handleSelect(event)}
+                    onRangeChange={event => this.handleRangeChange(event)}
                 ></BigCalendar>
                 <Modal
                     open={this.state.modalFormOpen}
