@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from flask.json import JSONEncoder
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import and_, or_
+from sqlalchemy import Index, and_, or_
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from sqlalchemy.ext.hybrid import hybrid_property
 
@@ -97,6 +97,10 @@ class Resource(db.Model, CRUDMixin):
 class Reservation(db.Model, CRUDMixin):
 
     __tablename__ = 'reservations'
+    __table_args__ = (
+        Index('ix_find_overlapping', 'resource_id', 'starts_at', 'ends_at'),
+        Index('ix_find_recurring', 'is_recurring', 'starts_at', 'ends_at'),
+    )
 
     resource_id = db.Column(db.Integer, db.ForeignKey('resources.id'))
     created_at = db.Column(db.DateTime)
@@ -241,7 +245,7 @@ class Recurrence(db.Model, CRUDMixin):
     # enums out-of-box
     frequency = db.Column(db.Integer)
     count = db.Column(db.Integer)
-    weekday = db.Column(db.Integer)
+    weekday = db.Column(db.Integer, index=True)
 
     @hybrid_property
     def ends_at(self):
