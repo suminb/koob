@@ -9,6 +9,7 @@ const recurringFrequencies = [
 class ReservationForm extends Component {
     state = {
         resourceId: 0,
+        reserved_by: '',
         title: '',
         description: '',
         start: null,
@@ -70,6 +71,11 @@ class ReservationForm extends Component {
     render() {
         return <Form onSubmit={this.handleSubmit}>
             <input type="hidden" name="resource_id" value={this.state.resourceId}/>
+            <div className="field">
+                <label>Your Name</label>
+                <Form.Input placeholder="Your name" width={8}
+                    name="reserved_by" value={this.state.reserved_by} onChange={this.handleChange} />
+            </div>
             <div className="field">
                 <label>Schedule</label>
                 <div className="fields">

@@ -5,8 +5,9 @@ import moment from 'moment'
 import { Button, Header, Image, Modal } from 'semantic-ui-react'
 
 import ReservationForm from './ReservationForm.js';
-
 import 'react-big-calendar/lib/css/react-big-calendar.css'
+
+const urlPrefix = 'http://localhost:8080/api/v1';
 
 class Calendar extends Component {
     state = {
@@ -24,15 +25,6 @@ class Calendar extends Component {
         // TODO: Figure out how to retrieve the current date from <Calendar> component
         var current = new Date();
         this.loadReservations(current);
-    }
-
-    /**
-     * Loads all reservations within a single day
-     * 
-     * @param {*} date 
-     */
-    loadReservations(date) {
-        const urlPrefix = 'http://localhost:8080/api/v1';
 
         fetch(urlPrefix + '/resources')
             .then(resp => resp.json())
@@ -41,19 +33,22 @@ class Calendar extends Component {
                     resources: data.resources.map(r => {return {resourceId: r.id, resourceTitle: r.title}})
                 })
             });
+    }
 
+    /**
+     * Loads all reservations within a single day
+     * 
+     * @param {*} date 
+     */
+    loadReservations(date) {
         var url = new URL(urlPrefix + '/reservations');
-        var lowerbound = new Date(date);
-        lowerbound.setHours(0, 0, 0);
-        var upperbound = new Date(date);
-        upperbound.setHours(23, 59, 59);
-        url.searchParams.append('lowerbound', this.formatDatetime(lowerbound));
-        url.searchParams.append('upperbound', this.formatDatetime(upperbound));
+        url.searchParams.append('date', this.formatDate(date));
 
         fetch(url)
             .then(resp => resp.json())
             .then(data => {
-                this.setState({ reservations: data.map(r => this.processReservation(r)) });
+                this.setState({ reservations: data.reservations.map(r => this.processReservation(r)) });
+                console.log(this.state.reservations);
             });
     }
 
@@ -61,10 +56,15 @@ class Calendar extends Component {
         return {
             id: raw.id,
             resourceId: raw['resource_id'],
-            title: raw.subject,
-            start: new Date(Date.parse(raw['start_datetime'])),
-            end: new Date(Date.parse(raw['end_datetime']))
+            start: new Date(Date.parse(raw['starts_at'])),
+            end: new Date(Date.parse(raw['ends_at'])),
+            title: raw.title,
+            description: raw.description
         };
+    }
+
+    formatDate(date) {
+        return this.formatDatetime(date).slice(0, 10);
     }
 
     formatDatetime(date) {
@@ -82,7 +82,7 @@ class Calendar extends Component {
     }
 
     handleRangeChange(date) {
-        this.loadReservations(date);
+        this.loadReservations(date[0]);
     }
 
     handleRoomReserved(reservation) {
@@ -105,11 +105,11 @@ class Calendar extends Component {
                     views={['day']}
                     step={30}
                     resources={this.state.resources}
-                    resourceIdAccessor="resourceId"
-                    resourceTitleAccessor="resourceTitle"
-                    startAccessor="start"
-                    endAccessor="end"
-                    onSelectEvent={event => alert(event.title)}
+                    resourceIdAccessor='resourceId'
+                    resourceTitleAccessor='resourceTitle'
+                    startAccessor='start'
+                    endAccessor='end'
+                    onSelectEvent={event => alert('TODO: Edit/delete this event')}
                     onSelectSlot={event => this.handleSelect(event)}
                     onRangeChange={event => this.handleRangeChange(event)}
                 ></BigCalendar>
