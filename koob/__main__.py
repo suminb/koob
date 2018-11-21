@@ -4,12 +4,14 @@ from koob import create_app
 from koob.models import db, Resource
 
 
-def insert_test_data():
+def insert_sample_data():
     params = [
         (1, 'Won', 8),
         (2, 'Dollar', 12),
         (3, 'Yen', 10),
-        (4, 'Baht', 4),
+        (4, 'Pound', 8),
+        (5, 'Baht', 4),
+        (6, 'Dong', 5),
     ]
 
     for id, title, capacity in params:
@@ -26,7 +28,7 @@ def create_db():
     app = create_app()
     with app.app_context():
         db.create_all()
-        insert_test_data()
+        insert_sample_data()
 
 
 if __name__ == '__main__':
