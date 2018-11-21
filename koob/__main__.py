@@ -24,6 +24,14 @@ def cli():
 
 
 @cli.command()
+def run():
+    """Runs the server."""
+    app = create_app()
+    with app.app_context():
+        app.run()
+
+
+@cli.command()
 def create_db():
     app = create_app()
     with app.app_context():
