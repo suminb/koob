@@ -16,7 +16,16 @@ Koob is a meeting room reservation system. If you read it backward, it's pretty 
 
 프론트엔드는 테스트 코드를 작성하지 못했고 코드 퀄리티도 원하는 수준으로 끌어올리지 못했지만, 다행히도 겉으로 보기에 기초적인 기능들은 대부분 작동하는 수준에서 마무리 할 수 있었습니다.
 
-## 설치
+## 간편 설치 & 실행
+
+    docker run -p 8080:8080 sumin/koob:latest
+    docker run -p 3000:3000 sumin/koob-frontend:latest
+
+위와 같이 두 개의 컨테이너를 띄우고 `localhost:3000` 으로 접속하면 회의실 예약 시스템을 사용할 수 있습니다. 혹시 직접 코드를 실행시키고 싶다면 아래 섹션을 참고하십시오.
+
+## 직접 설치 & 실행
+
+### Backend
 
     git clone https://github.com/suminb/koob.git && cd koob
 
@@ -28,10 +37,6 @@ Koob is a meeting room reservation system. If you read it backward, it's pretty 
 테스트 코드를 실행하려면 다음의 명령어로 관련 패키지를 설치해주어야 합니다.
 
     pip install -r tests/requirements.txt
-
-## 실행
-
-### Backend
 
 웹 서버는 다음과 같이 실행할 수 있고,
 
@@ -51,14 +56,8 @@ Koob is a meeting room reservation system. If you read it backward, it's pretty 
 
 ### Frontend
 
+    npm install
     npm start
-
-### Docker
-
-    docker run -p 8080:8080 sumin/koob:latest
-    docker run -p 3000:3000 sumin/koob-frontend:latest
-
-위와 같이 두 개의 컨테이너를 띄우고 `localhost:3000` 으로 접속하면 회의실 예약 시스템을 사용할 수 있습니다.
 
 ## 고민했던 디자인 결정들
 
@@ -126,3 +125,6 @@ Secondary index 존재 유무는 무시할 수 없는 수준의 성능 차이를
 - 여러 기관(organizations) 지원; 각각의 기관은 다른 회의실 목록을 보유
 - 국제화
 - AWS Gateway + Lambda 를 이용해서 서버리스(serverless) 백엔드를 만들기
+
+## 앞으로의 계획
+
