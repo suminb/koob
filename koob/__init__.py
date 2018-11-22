@@ -15,13 +15,16 @@ log = Logger('koob')
 DEFAULT_DB_URL = 'sqlite:///dev.db'
 
 
-def create_app(name=__name__, config={}):
+def create_app(name=__name__, config=None):
+    if config is None:
+        config = {}
+
     app = Flask(name)
     app.secret_key = os.environ.get('SECRET', 'default_secret_key')
     app.config['SQLALCHEMY_DATABASE_URI'] = \
         os.environ.get('DB_URL', DEFAULT_DB_URL)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['DEBUG'] = bool(os.environ.get('KOOB_DEBUG', False))
+    app.config['DEBUG'] = bool(os.environ.get('KOOB_DEBUG'))
 
     app.config.update(config)
 
@@ -49,7 +52,3 @@ def run_server(app):
     host = os.environ.get('KOOB_HOST', '0.0.0.0')
     port = int(os.environ.get('KOOB_PORT', 8080))
     app.run(host=host, port=port)
-
-
-if __name__ == '__main__':
-    run_server(create_app())
