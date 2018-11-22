@@ -23,6 +23,8 @@ Koob is a meeting room reservation system. If you read it backward, it's pretty 
 
 위와 같이 두 개의 컨테이너를 띄우고 `localhost:3000` 으로 접속하면 회의실 예약 시스템을 사용할 수 있습니다. 혹시 직접 코드를 실행시키고 싶다면 아래 섹션을 참고하십시오.
 
+(TODO: docker-compose 를 이용해서 띄우기)
+
 ## 직접 설치 & 실행
 
 ### Backend
