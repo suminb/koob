@@ -53,6 +53,13 @@ Koob is a meeting room reservation system. If you read it backward, it's pretty 
 
     npm start
 
+### Docker
+
+    docker run -p 8080:8080 sumin/koob:latest
+    docker run -p 3000:3000 sumin/koob-frontend:latest
+
+위와 같이 두 개의 컨테이너를 띄우고 `localhost:3000` 으로 접속하면 회의실 예약 시스템을 사용할 수 있습니다.
+
 ## 고민했던 디자인 결정들
 
 ### SQLite
@@ -105,7 +112,7 @@ Secondary index 존재 유무는 무시할 수 없는 수준의 성능 차이를
 
 - 타임존 지원이 되지 않습니다. 로컬 타임존에 의존하기 때문에 서버 시간과 클라이언트 시간이 다르면 매우 해괴한 문제들이 생길 수 있습니다. GMT+9에서만 테스트 했습니다. 시간이 조금 더 있다면 이 문제부터 고치고 싶습니다.
 - SQLite의 한계로 인해 반복되는 이벤트 날짜 계산을 데이터베이스에서 하지 못하고 애플리케이션 코드에서 수행합니다. (`models.py` 코드 내 주석 참고)
-- URL 하드코딩
+- 프론트엔드에서의 서버 URL 하드코딩
 
 ## 이번에 이루지 못한 꿈들
 
