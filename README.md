@@ -124,7 +124,8 @@ Secondary index 존재 유무는 무시할 수 없는 수준의 성능 차이를
 - OAuth 사용자 인증 기능
 - 여러 기관(organizations) 지원; 각각의 기관은 다른 회의실 목록을 보유
 - 국제화
-- AWS Gateway + Lambda 를 이용해서 서버리스(serverless) 백엔드를 만들기
+- AWS API Gateway + Lambda 를 이용해서 서버리스(serverless) 백엔드를 만들기
+- 시맨틱 버전 관리, 도커 태그 정책 정하기
 
 ## 앞으로의 계획
 
