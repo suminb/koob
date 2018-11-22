@@ -5,8 +5,9 @@ import moment from 'moment'
 import { Button, Header, Image, Modal } from 'semantic-ui-react'
 
 import ReservationForm from './ReservationForm.js';
-
 import 'react-big-calendar/lib/css/react-big-calendar.css'
+
+const urlPrefix = 'http://localhost:8080/api/v1';
 
 class Calendar extends Component {
     state = {
@@ -14,42 +15,56 @@ class Calendar extends Component {
         startDatetime: null,
         endDatetime: null,
 
-        rooms: [],
+        resources: [],
         reservations: [],
         reservationsDict: {}
     };
 
     // Code is invoked after the component is mounted/inserted into the DOM tree.
     componentDidMount() {
-        const urlPrefix = 'http://localhost:8087';
+        // TODO: Figure out how to retrieve the current date from <Calendar> component
+        var current = new Date();
+        this.loadReservations(current);
 
-        fetch(urlPrefix + '/rooms')
+        fetch(urlPrefix + '/resources')
             .then(resp => resp.json())
             .then(data => {
                 this.setState({
-                    rooms: data.map(r => {return {roomId: r.id, roomName: r.name}})
+                    resources: data.resources.map(r => {return {resourceId: r.id, resourceTitle: r.title}})
                 })
             });
+    }
 
+    /**
+     * Loads all reservations within a single day
+     * 
+     * @param {*} date 
+     */
+    loadReservations(date) {
         var url = new URL(urlPrefix + '/reservations');
-        url.searchParams.append('start_datetime', '2018-11-17');
-        url.searchParams.append('end_datetime', '2018-11-17');
+        url.searchParams.append('date', this.formatDate(date));
 
         fetch(url)
             .then(resp => resp.json())
             .then(data => {
-                this.setState({ reservations: data.map(r => this.processReservation(r)) });
+                this.setState({ reservations: data.reservations.map(r => this.processReservation(r)) });
+                console.log(this.state.reservations);
             });
     }
 
     processReservation(raw) {
         return {
             id: raw.id,
-            resourceId: raw['room_id'],
-            title: raw.subject,
-            start: new Date(Date.parse(raw['start_datetime'])),
-            end: new Date(Date.parse(raw['end_datetime']))
+            resourceId: raw['resource_id'],
+            start: new Date(Date.parse(raw['starts_at'])),
+            end: new Date(Date.parse(raw['ends_at'])),
+            title: raw.title,
+            description: raw.description
         };
+    }
+
+    formatDate(date) {
+        return this.formatDatetime(date).slice(0, 10);
     }
 
     formatDatetime(date) {
@@ -66,6 +81,10 @@ class Calendar extends Component {
         });
     }
 
+    handleRangeChange(date) {
+        this.loadReservations(date.length > 0 ? date[0] : new Date());
+    }
+
     handleRoomReserved(reservation) {
         this.setState({
             reservations: this.state.reservations.concat(this.processReservation(reservation))
@@ -73,7 +92,7 @@ class Calendar extends Component {
     }
 
     render() {
-        if (this.state.rooms.length == 0) {
+        if (this.state.resources.length == 0) {
             return <div>There is no meeting room available</div>;
         }
         else {
@@ -85,13 +104,14 @@ class Calendar extends Component {
                     defaultView={BigCalendar.Views.DAY}
                     views={['day']}
                     step={30}
-                    resources={this.state.rooms}
-                    resourceIdAccessor="roomId"
-                    resourceTitleAccessor="roomName"
-                    startAccessor="start"
-                    endAccessor="end"
-                    onSelectEvent={event => alert(event.title)}
+                    resources={this.state.resources}
+                    resourceIdAccessor='resourceId'
+                    resourceTitleAccessor='resourceTitle'
+                    startAccessor='start'
+                    endAccessor='end'
+                    onSelectEvent={event => alert('TODO: Edit/delete this event')}
                     onSelectSlot={event => this.handleSelect(event)}
+                    onRangeChange={event => this.handleRangeChange(event)}
                 ></BigCalendar>
                 <Modal
                     open={this.state.modalFormOpen}
@@ -99,9 +119,9 @@ class Calendar extends Component {
                     <Modal.Header>Schedule a meeting</Modal.Header>
                     <Modal.Content>
                         <ReservationForm
-                            roomId={this.state.selectedResourceId}
-                            startDatetime={this.state.startDatetime}
-                            endDatetime={this.state.endDatetime}
+                            resourceId={this.state.selectedResourceId}
+                            startsAt={this.state.startDatetime}
+                            endsAt={this.state.endDatetime}
                             onRoomReserved={event => this.handleRoomReserved(event)}
                             onClose={_ => this.setState({ modalFormOpen: false })}
                             ></ReservationForm>

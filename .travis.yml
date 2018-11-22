@@ -1,14 +1,22 @@
-language: java
-jdk:
-  - oraclejdk8
-  - openjdk8
-dist: xenial
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
+sudo: false
+
+language: python
+python:
+  - "3.6"
+
+env:
+  global:
+    - DB_URL="sqlite:///dev.db"
+    - TEST_DB_URL="sqlite:///test.db"
+    - PYTHONPATH=.
+
+install:
+  - pip install -r requirements.txt
+  - pip install -r tests/requirements.txt
+  - pip install -e .
+
+before_script:
+  - flake8 koob tests
+
 script:
-  - gradle test
+  - py.test -v tests --cov koob --cov-report term-missing
