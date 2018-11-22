@@ -1,6 +1,8 @@
+import os
+
 import click
 
-from koob import create_app
+from koob import create_app, run_server
 from koob.models import db, Resource
 
 
@@ -28,7 +30,7 @@ def run():
     """Runs the server."""
     app = create_app()
     with app.app_context():
-        app.run()
+        run_server(app)
 
 
 @cli.command()

@@ -21,10 +21,6 @@ def create_app(name=__name__, config={}):
     app.config['SQLALCHEMY_DATABASE_URI'] = \
         os.environ.get('DB_URL', DEFAULT_DB_URL)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-    host = os.environ.get('KOOB_HOST', '0.0.0.0')
-    port = int(os.environ.get('KOOB_PORT', 8080))
-    app.config['SERVER_NAME'] = f'{host}:{port}'
     app.config['DEBUG'] = bool(os.environ.get('KOOB_DEBUG', False))
 
     app.config.update(config)
@@ -49,6 +45,11 @@ def create_app(name=__name__, config={}):
     return app
 
 
+def run_server(app):
+    host = os.environ.get('KOOB_HOST', '0.0.0.0')
+    port = int(os.environ.get('KOOB_PORT', 8080))
+    app.run(host=host, port=port)
+
+
 if __name__ == '__main__':
-    app = create_app()
-    app.run()
+    run_server(create_app())
