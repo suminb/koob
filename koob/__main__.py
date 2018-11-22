@@ -1,5 +1,3 @@
-import os
-
 import click
 
 from koob import create_app, run_server
