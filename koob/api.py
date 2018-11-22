@@ -43,4 +43,4 @@ def delete_reservation_v1(reservation_id):
     reservation = Reservation.query.get_or_404(reservation_id)
     reservation.delete()
 
-    return ''
+    return jsonify({})
