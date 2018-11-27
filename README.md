@@ -73,7 +73,7 @@ SQLite를 사용하기로 한건 가장 후회하는 결정 중에 하나입니�
 
 다음번에 비슷한 결정을 내려야 할 일이 있다면 SQLite 대신 H2를 사용해보고 싶습니다. SQLite에 비해서는 훨씬 풍부한 기능들을 제공하는 것으로 [보여집니다](http://www.h2database.com/html/functions.html). 다만, `SQLAlchemy` 라이브러리에서 H2를 공식적으로 지원하지 않기 때문에 직접 어댑터를 만들거나 다른 ORM을 사용해야 할 것 같습니다.
 
-### Recurrence index vs. synthesizing recurring events
+### Synthesizing Recurring Events vs. Recurrence Index
 
 반복되는 이벤트를 표현하는 다양한 방법이 있겠지만, 크게 두 가지 후보를 고려했습니다.
 
@@ -90,17 +90,17 @@ SQLite를 사용하기로 한건 가장 후회하는 결정 중에 하나입니�
 
 지금은 정수형 필드에 `AUTO INCREMENT` 옵션을 걸어놔서 순차적으로 증가하는 아이디를 발급하도록 만들어놓았습니다. 하지만 이런 방식은 멀티 마스터 데이터베이스 구조에 적합하지 않습니다. 두 개 이상의 노드가 동시에 하나의 카운터를 증가시킬 때 정합성을 보장하는 것은 매우 어려운 일이기 때문입니다. 물론 [이러한 문제를 해결하기 위한 자료구조](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type#G-Counter_(Grow-only_Counter))가 있긴 하지만, RDBMS의 `AUTO INCREMENT`가 그런식으로 구현되어있을 것 같지는 않습니다.
 
-이러한 문제를 완화하기 위해서는 유일함이 보장되는 아이디를 발급하는 별도의 서비스를 두거나, 타임스탬프와 머신 아이디를 이용해서 그러한 별도의 서비스 없이 유일한 아이디를 발급할 수 있도록 해야 합니다. ([UUID2](https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_2_(date-time_and_MAC_address,_DCE_security_version))와 같은 방식)
+이러한 문제를 해결하기 위해서는 유일함이 보장되는 아이디를 발급하는 별도의 서비스를 두거나, 타임스탬프와 머신 아이디를 이용해서 그러한 별도의 서비스 없이 유일한 아이디를 발급할 수 있도록 해야 합니다. ([UUID2](https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_2_(date-time_and_MAC_address,_DCE_security_version))와 같은 방식)
 
 #### Primary Keys
 
-현재는 각 엔티티가 정수형 필드 하나를 PK로 가지고 있는 형태인데, 아쉽게도(?) API 디자인 상 예약(`Reservation`) 아이디를 가지고 조회를 하는 경우는 없습니다. 물론 자주 사용되는 형태로 멀티 컬럼 인덱스들이 빌드 되어있습니다.
+현재는 각 엔티티가 정수형 필드 하나를 PK로 가지고 있는 형태인데, 아쉽게도(?) API 디자인 상 예약(`Reservation`) 아이디를 가지고 조회를 하는 경우는 없습니다. 다만, 자주 사용되는 형태로 멀티 컬럼 인덱스들이 빌드 되어있기는 합니다.
 
 - 특정 시간 범위에 겹치는 예약 찾기
 - 특정 시간 범위에 반복되는 예약 찾기
 - 특정 날짜(weekday)에 반복되는 예약 찾기
 
-만약 이 중에서 월등하게 많이 사용되는 패턴이 있다면 그것을 secondary index가 아닌 primary key로 만들어서 성능 향상의 꾀할 수 있을 것 같습니다. (물론 그렇게 해서 실제로 디스크 엑세스 회수를 줄일 수 있는지 연구해봐야 합니다.)
+만약 이 중에서 월등하게 많이 사용되는 패턴이 있다면 그것을 secondary index가 아닌 primary key로 만들어서 성능 향상을 도모할 수 있습니다. (물론 그렇게 해서 실제로 디스크 엑세스 회수를 줄일 수 있는지 연구해봐야 합니다.)
 
 #### Secondary Indexes
 
@@ -113,7 +113,7 @@ Secondary index 존재 유무는 무시할 수 없는 수준의 성능 차이를
 
 ## Known Issues
 
-- 타임존 지원이 되지 않습니다. 로컬 타임존에 의존하기 때문에 서버 시간과 클라이언트 시간이 다르면 매우 해괴한 문제들이 생길 수 있습니다. GMT+9에서만 테스트 했습니다. 시간이 조금 더 있다면 이 문제부터 고치고 싶습니다.
+- 타임존이 지원 되지 않습니다. 로컬 타임존에 의존하기 때문에 서버 시간과 클라이언트 시간이 다르면 매우 해괴한 문제들이 생길 수 있습니다. GMT+9에서만 테스트 했습니다. 시간이 조금 더 있다면 이 문제부터 고치고 싶습니다.
 - SQLite의 한계로 인해 반복되는 이벤트 날짜 계산을 데이터베이스에서 하지 못하고 애플리케이션 코드에서 수행합니다. (`models.py` 코드 내 주석 참고)
 - 프론트엔드에서의 서버 URL 하드코딩
 - 일정이 자정을 넘어가는 경우 다음날 슬롯에 일정이 표시되지 않고 당일 자정에서 끝나는 문제 (시간은 제대로 표시됨). 이건 `react-big-calendar`의 버그이고, 이미 제보 되어있지 않다면 이슈 티켓을 하나 만드는 것이 좋을 것 같습니다.
