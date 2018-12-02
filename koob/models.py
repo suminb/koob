@@ -40,8 +40,7 @@ class CRUDMixin(object):
     def get(cls, id):
         return cls.query.get(id)
 
-    # We will also proxy Flask-SqlAlchemy's get_or_404
-    # for symmetry
+    # We will also proxy Flask-SqlAlchemy's get_or_404 for symmetry
     @classmethod
     def get_or_404(cls, id):
         return cls.query.get_or_404(id)
@@ -132,6 +131,8 @@ class Reservation(db.Model, CRUDMixin):
             raise NotImplementedError
 
     def set_recurring_date(self, date):
+        """Dynamically set the recurring date based on the `date` parameter.
+        """
         self.recurring_date = date
         return self
 
@@ -271,6 +272,11 @@ class RecurringFrequency:
 
 
 class EvaluatedQuery:
+    """This is a temporary workaround due to limitations of SQLite (not being
+    able to use temporal functions to calculate time deltas). This allows us to
+    perform the operations on the application side, while keeping
+    an SQLAlchemy-like query interface.
+    """
 
     def __init__(self, records):
         self.records = records

@@ -28,6 +28,7 @@ def create_app(name=__name__, config=None):
 
     app.config.update(config)
 
+    # FIXME: Potential security issues. Need to restrict origins.
     CORS(app, resources={r'/api/v1/*': {'origins': '*'}})
 
     from koob.models import db, KoobJSONEncoder

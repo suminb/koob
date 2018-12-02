@@ -3,6 +3,7 @@ from wtforms.validators import DataRequired, Length, ValidationError
 
 
 def valid_hours(form, field):
+    """Ensures the minutes are in a 30-minute interval."""
     if field.data.minute % 30 != 0:
         raise ValidationError(
             'Reservations can be made at 30-minute increments only')
