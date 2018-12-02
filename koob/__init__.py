@@ -22,7 +22,7 @@ def create_app(name=__name__, config=None):
     app = Flask(name)
     app.secret_key = os.environ.get('SECRET', 'default_secret_key')
     app.config['SQLALCHEMY_DATABASE_URI'] = \
-        os.environ.get('DB_URL', DEFAULT_DB_URL)
+        os.environ.get('KOOB_DB_URL', DEFAULT_DB_URL)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['DEBUG'] = bool(os.environ.get('KOOB_DEBUG'))
 
