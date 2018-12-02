@@ -10,7 +10,7 @@ def readme():
     try:
         with open('README.rst') as f:
             return f.read()
-    except:
+    except FileNotFoundError:
         return '(Could not read from README.rst)'
 
 
