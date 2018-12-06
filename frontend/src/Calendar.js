@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import BigCalendar from 'react-big-calendar'
 import moment from 'moment'
-import { Button, Header, Image, Modal } from 'semantic-ui-react'
+import { Modal } from 'semantic-ui-react'
 
 import ReservationForm from './ReservationForm.js';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
@@ -92,7 +92,7 @@ class Calendar extends Component {
     }
 
     render() {
-        if (this.state.resources.length == 0) {
+        if (this.state.resources.length === 0) {
             return <div>There is no meeting room available</div>;
         }
         else {

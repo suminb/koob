@@ -54,7 +54,7 @@ class ReservationForm extends Component {
 
         fetch('http://localhost:8080/api/v1/reservations', {method: 'POST', body: data})
             .then(resp => {
-                if (resp.status == 200) {
+                if (resp.status === 200) {
                     resp.json().then(data => {
                         parent.props.onRoomReserved(data);
 
