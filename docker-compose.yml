@@ -1,0 +1,12 @@
+version: "3"
+services:
+  frontend:
+    image: sumin/koob-frontend
+    ports:
+      - "3000:3000"
+    links:
+     - backend
+  backend:
+    image: sumin/koob
+    ports:
+      - "8080:8080"

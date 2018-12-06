@@ -20,12 +20,14 @@ Koob is a meeting room reservation system. If you read it backward, it's pretty 
 
 ## 간편 설치 & 실행
 
+    docker-compose up
+
+혹은, 다음과 같이 수동으로 두 개의 컨테이너를 구동할 수도 있습니다.
+
     docker run -p 8080:8080 sumin/koob:latest
     docker run -p 3000:3000 sumin/koob-frontend:latest
 
-위와 같이 두 개의 컨테이너를 띄우고 `localhost:3000` 으로 접속하면 회의실 예약 시스템을 사용할 수 있습니다. 혹시 직접 코드를 실행시키고 싶다면 아래 섹션을 참고하십시오.
-
-(TODO: docker-compose 를 이용해서 띄우기)
+위와 같이 필요한 컨테이너를 띄우고 `localhost:3000` 으로 접속하면 회의실 예약 시스템을 사용할 수 있습니다. 혹시 직접 코드를 실행시키고 싶다면 아래 섹션을 참고하십시오.
 
 ## 직접 설치 & 실행
 
